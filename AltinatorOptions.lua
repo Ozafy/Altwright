@@ -101,6 +101,17 @@ function CreateOptionsCategory()
    )
 	Settings.CreateCheckbox(AltinatorOptionsCategory, tooltipSetting, L["OptionTooltipText"])
 
+	local loginAlertSetting = Settings.RegisterAddOnSetting(
+      AltinatorOptionsCategory,
+      "Altinator_LoginAlert_Toggle",
+      "hideLoginAlert",
+      AltinatorNS.AltinatorDB.profile.settings,
+      Settings.VarType.Boolean,
+      L["OptionLoginAlert"],
+      Settings.Default.False
+   )
+	Settings.CreateCheckbox(AltinatorOptionsCategory, loginAlertSetting, L["OptionLoginAlertText"])
+
     local name = L["OptionsDeleteHeader"];
     local data = { name = name };
     local initializer = Settings.CreateSettingInitializer("SettingsListSectionHeaderTemplate", data);

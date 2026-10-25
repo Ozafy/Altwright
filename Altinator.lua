@@ -59,6 +59,7 @@ function AltinatorAddon:OnInitialize()
 			},
          settings = {
             hideRecipeTooltips = false,
+            hideLoginAlert = false,
          }
 		},
       global = {
@@ -151,7 +152,7 @@ function AltinatorAddon:PLAYER_ENTERING_WORLD(self, isLogin, isReload)
       AltinatorNS.AltinatorData:SavePlayerDataLogin()
    end
    if isLogin then
-      AltinatorAddon:ScheduleTimer(AltinatorNS.AltinatorData.NotifyExpiredCooldowns, 5)
+      AltinatorAddon:ScheduleTimer(AltinatorNS.AltinatorData.NotifyOnLogin, 5)
    end
    -- IsResting() can still be false right after loading in, check again once the world is settled
    ScheduleOnce("resting", AltinatorNS.AltinatorData.SavePlayerResting, 3)

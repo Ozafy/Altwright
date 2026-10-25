@@ -14,6 +14,15 @@ AltinatorNS.AltinatorLDB = AltinatorLDB
 function AltinatorLDB:OnTooltipShow(tooltip)
    self:AddLine(AddonName, 255, 255, 255)
    self:AddLine(" ")
+   local readyCooldowns = AltinatorNS.AltinatorData:GetReadyCooldowns()
+   if #readyCooldowns > 0 then
+      self:AddLine(L["ProfessionCooldownsReadyHeader"] .. ":")
+      for _, cooldown in ipairs(readyCooldowns) do
+         local cr, cg, cb = GetClassColor(cooldown.Char.Class.File)
+         self:AddDoubleLine(cooldown.Char.Name, cooldown.Name or "?", cr, cg, cb, 1, 0.82, 0)
+      end
+      self:AddLine(" ")
+   end
    self:AddLine(L["Gold"] .. ":")
    local totalmoney = 0
    local characters = AltinatorNS:GetRealmCharactersSorted()

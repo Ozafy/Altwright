@@ -594,30 +594,100 @@ local function AddActiveCooldowns(cooldowns, items)
    end
 end
 
-local function NotifyExpired(char, items)
-   if items then
-      for _, itemData in pairs(items) do
-         if itemData.Cooldown and itemData.Cooldown>0 and itemData.CooldownEndTime and itemData.CooldownEndTime>0
-            and itemData.CooldownEndTime<=time() and not itemData.ExpiredNotified then
-            local _, _, _, classColor = GetClassColor(char.Class.File)
-            print("\124cffff8000" .. AddonName .. ":\124r " .. string.format(L["ProfessionCooldownExpired"], "\124c" .. classColor .. char.Name .. "\124r", "\124cnYELLOW_FONT_COLOR:" .. (itemData.Name or "?") .. "\124r"))
-            itemData.ExpiredNotified = true
+-- calls func(char, itemData) for every profession cooldown that has expired but hasn't been used again yet
+local function ForEachReadyCooldown(func, includeHidden)
+   for _, name in ipairs(AltinatorNS:GetRealmCharactersSorted(includeHidden)) do
+      local char = AltinatorNS.AltinatorDB.global.characters[name]
+      for _, professions in ipairs({ char.Professions or {}, char.ProfessionsSecondairy or {} }) do
+         for _, profession in pairs(professions) do
+            for _, items in ipairs({ profession.Items or {}, profession.ItemCooldowns or {} }) do
+               for _, itemData in pairs(items) do
+                  if itemData.Cooldown and itemData.Cooldown>0 and itemData.CooldownEndTime and itemData.CooldownEndTime>0
+                     and itemData.CooldownEndTime<=time() then
+                     func(char, itemData)
+                  end
+               end
+            end
          end
       end
    end
 end
 
--- warns once about every profession cooldown that expired since the last warning
-function AltinatorData:NotifyExpiredCooldowns()
-   for _, name in ipairs(AltinatorNS:GetRealmCharactersSorted()) do
+function AltinatorData:GetReadyCooldowns()
+   local ready = {}
+   ForEachReadyCooldown(function(char, itemData)
+      table.insert(ready, { Char = char, Name = itemData.Name })
+   end)
+   return ready
+end
+
+local function ColoredCharacterName(char)
+   local _, _, _, classColor = GetClassColor(char.Class.File)
+   return "\124c" .. classColor .. char.Name .. "\124r"
+end
+
+local function PrintNotification(message)
+   print("\124cffff8000" .. AddonName .. ":\124r " .. message)
+end
+
+-- warns once about every profession cooldown that expired since the last warning, returns the number of warnings
+local function NotifyExpiredCooldowns()
+   local count = 0
+   ForEachReadyCooldown(function(char, itemData)
+      if not itemData.ExpiredNotified then
+         PrintNotification(string.format(L["ProfessionCooldownExpired"], ColoredCharacterName(char), "\124cnYELLOW_FONT_COLOR:" .. (itemData.Name or "?") .. "\124r"))
+         itemData.ExpiredNotified = true
+         count = count + 1
+      end
+   end, true) -- hidden characters are only hidden from the lists, their cooldowns still matter
+   return count
+end
+
+-- warns about alt mail that is about to expire: once at 10 days, once at 5 days and on every login from 3 days on
+-- returns the number of warnings
+local function NotifyExpiringMail()
+   local count = 0
+   for _, name in ipairs(AltinatorNS:GetRealmCharactersSorted(true)) do
       local char = AltinatorNS.AltinatorDB.global.characters[name]
-      for _, professions in ipairs({ char.Professions or {}, char.ProfessionsSecondairy or {} }) do
-         for _, profession in pairs(professions) do
-            NotifyExpired(char, profession.Items)
-            NotifyExpired(char, profession.ItemCooldowns)
+      for _, mail in ipairs(char.Mail or {}) do
+         local timeLeft = mail.ExpiryTime - time()
+         local threshold
+         for _, days in ipairs(C["MailExpiryWarningDays"]) do
+            if timeLeft <= days * 86400 then
+               threshold = days
+            end
+         end
+         -- mail past its expiry time is already gone in game, it gets cleaned up when its recipient logs in
+         if timeLeft > 0 and threshold and (threshold <= C["MailExpiryWarningEveryLoginDays"] or (mail.ExpiryWarned or math.huge) > threshold) then
+            local sender = AltinatorNS.AltinatorDB.global.characters[mail.Sender]
+            local senderName = sender and ColoredCharacterName(sender) or mail.Sender
+            local expiresIn = strtrim(AltinatorNS:LongTimeSpanToString(timeLeft))
+            PrintNotification(string.format(mail.Returned and L["MailExpiringReturned"] or L["MailExpiring"], ColoredCharacterName(char), senderName, expiresIn))
+            mail.ExpiryWarned = threshold
+            count = count + 1
          end
       end
    end
+   return count
+end
+
+local function ShowLoginAlert(message)
+   RaidNotice_AddMessage(RaidWarningFrame, AddonName .. ": " .. message, { r = 1, g = 0.82, b = 0 }, 8)
+end
+
+function AltinatorData:NotifyOnLogin()
+   local cooldownCount = NotifyExpiredCooldowns()
+   local mailCount = NotifyExpiringMail()
+   if AltinatorNS.AltinatorDB.profile.settings.hideLoginAlert or (cooldownCount == 0 and mailCount == 0) then
+      return
+   end
+   if cooldownCount > 0 then
+      ShowLoginAlert(cooldownCount == 1 and L["ProfessionCooldownReady"] or string.format(L["ProfessionCooldownsReady"], cooldownCount))
+   end
+   if mailCount > 0 then
+      ShowLoginAlert(mailCount == 1 and L["MailExpiringAlert"] or string.format(L["MailsExpiringAlert"], mailCount))
+   end
+   PlaySound(SOUNDKIT.MAP_PING)
 end
 
 function AltinatorData:GetProfessionCooldowns(profession)

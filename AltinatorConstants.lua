@@ -95,6 +95,8 @@ C["EquipmentSlotIcons"]  = {
 }
 C["MailDelivery"] = 1 -- in hours
 C["MailExpiry"] = 30 -- in days
+C["MailExpiryWarningDays"] = { 10, 5, 3 } -- warn when this many days are left, from high to low
+C["MailExpiryWarningEveryLoginDays"] = 3 -- from this many days left on, warn on every login
 C["RestedXPBonus"] = 5/100 -- in percent
 C["RestedXPTimeSpan"] = 8 -- time in hours to gain the percent bonus
 C["RestedXPTimeSpanNotResting"] = 32 -- time in hours to gain the percent bonus outside resting areas

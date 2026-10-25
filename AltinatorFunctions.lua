@@ -3,11 +3,11 @@ local AddonName, AltinatorNS = ...
 local C = AltinatorNS.C
 local L = LibStub("AceLocale-3.0"):GetLocale(AddonName)
 
-function AltinatorNS:GetRealmCharactersSorted()
+function AltinatorNS:GetRealmCharactersSorted(includeHidden)
    local characterNames = {}
    local realm = GetNormalizedRealmName()
    for key, char in pairs(self.AltinatorDB.global.characters) do
-      if char.Realm == realm and not self.AltinatorDB.global.hiddenCharacters[key] then
+      if char.Realm == realm and (includeHidden or not self.AltinatorDB.global.hiddenCharacters[key]) then
          table.insert(characterNames, key)
       end
    end
