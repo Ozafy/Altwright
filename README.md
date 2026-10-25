@@ -1,4 +1,4 @@
-# Description
+# Altwright
 A simple World of Warcraft add-on that displays various information about your alts. Most functionality uses the [Syndicator](https://github.com/TheMouseNest/Syndicator) add-on so you should install this too.
 
 - Overview shows a summary of your characters
@@ -8,23 +8,26 @@ A simple World of Warcraft add-on that displays various information about your a
 - Attunements shows all available attunements and keys
 - Search allows you to search all of your alts bags and banks
 
-You can open the addon using the minimap icon or by typing "/alt". You can open the options using the default blizzard options panel or by typing "/alt o".
+You can open the addon using the minimap icon or by typing "/alt" or "/altwright". You can open the options using the default blizzard options panel or by typing "/alt o".
+
+# Formerly Altinator
+Altwright used to be called Altinator. Your settings and character data are copied over automatically the first time Altwright loads. For this the download includes a small "Altinator" add-on that only loads the old settings, you can leave it enabled. It will be removed in a later version.
 
 # Screenshots
 ## Overview
-![Overview](https://raw.github.com/Ozafy/Altinator/main/Screenshots/Overview.png)
+![Overview](https://raw.github.com/Ozafy/Altwright/main/Screenshots/Overview.png)
 
 ## Activity
-![Activity](https://raw.github.com/Ozafy/Altinator/main/Screenshots/Activity.png)
+![Activity](https://raw.github.com/Ozafy/Altwright/main/Screenshots/Activity.png)
 
 ## Professions
-![Professions](https://raw.github.com/Ozafy/Altinator/main/Screenshots/Professions.png)
+![Professions](https://raw.github.com/Ozafy/Altwright/main/Screenshots/Professions.png)
 
 ## Gear
-![Gear](https://raw.github.com/Ozafy/Altinator/main/Screenshots/Gear.png)
+![Gear](https://raw.github.com/Ozafy/Altwright/main/Screenshots/Gear.png)
 
 ## Attunements
-![Attunements](https://raw.github.com/Ozafy/Altinator/main/Screenshots/Attunements.png)
+![Attunements](https://raw.github.com/Ozafy/Altwright/main/Screenshots/Attunements.png)
 
 ## Search
-![Search](https://raw.github.com/Ozafy/Altinator/main/Screenshots/Search.png)
+![Search](https://raw.github.com/Ozafy/Altwright/main/Screenshots/Search.png)

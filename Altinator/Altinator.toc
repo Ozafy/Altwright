@@ -1,6 +1,6 @@
 ## Interface: 11509
 ## Title: Altinator (renamed to Altwright)
-## Version: 2.12
+## Version: 3.0
 ## Author: Ozafy
 ## Notes: Altinator is now called Altwright. This only loads the old Altinator settings so Altwright can copy them over, it can be removed afterwards.
 ## DefaultState: Enabled

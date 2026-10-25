@@ -1,6 +1,6 @@
 ## Interface: 11509
 ## Title: Altwright
-## Version: 2.12
+## Version: 3.0
 ## Author: Ozafy
 ## IconTexture: Interface/Icons/inv_scroll_03
 ## Notes: Shows alt things using Syndicator
