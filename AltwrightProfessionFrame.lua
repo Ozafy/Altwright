@@ -1,10 +1,10 @@
-local AddonName, AltinatorNS = ...
+local AddonName, AltwrightNS = ...
 
-local C = AltinatorNS.C
+local C = AltwrightNS.C
 local L = LibStub("AceLocale-3.0"):GetLocale(AddonName)
 
-local AltinatorProfessionFrame = {}
-AltinatorNS.AltinatorProfessionFrame = AltinatorProfessionFrame
+local AltwrightProfessionFrame = {}
+AltwrightNS.AltwrightProfessionFrame = AltwrightProfessionFrame
 
 local function GetMaxSkillForLevel(level)
    local maxSkill = 0
@@ -19,7 +19,7 @@ end
 local function GetProfessionCooldownTooltip(tooltip, cooldowns)
    if #cooldowns > 0 then
          for i, cd in ipairs(cooldowns) do
-         tooltip:AddLine(cd.Name .. ": " .. AltinatorNS:LongTimeSpanToString(cd.CooldownEndTime - time()))
+         tooltip:AddLine(cd.Name .. ": " .. AltwrightNS:LongTimeSpanToString(cd.CooldownEndTime - time()))
       end
    else
       tooltip:AddLine(L["ProfessionNoCooldowns"])
@@ -57,7 +57,7 @@ local function CreateProfessionTexture(char, contentFrame, charIndex, anchor, ba
    contentFrame.ProfessionTexts[charIndex][profIndex]:SetTextColor(r, g, b)
 end
 
-function AltinatorProfessionFrame:Initialize(self)
+function AltwrightProfessionFrame:Initialize(self)
     local _PADDING = 5
     local _ICON_SIZE = 15
     local _HEIGHT = _ICON_SIZE + 5
@@ -74,24 +74,24 @@ function AltinatorProfessionFrame:Initialize(self)
     self.CooldownHeader:SetPoint("LEFT", self.ProfessionsHeader, "LEFT", 450, 0)
     self.CooldownHeader:SetText(L["ProfessionCooldowns"])
 
-    local scrollFrame = self.ScrollFrame or AltinatorNS:CreateScrollFrame(self)
-    AltinatorNS:HideRowWidgets(scrollFrame.content)
+    local scrollFrame = self.ScrollFrame or AltwrightNS:CreateScrollFrame(self)
+    AltwrightNS:HideRowWidgets(scrollFrame.content)
 
     local totalCharacters = 0
-    local characters = AltinatorNS:GetRealmCharactersSorted()
+    local characters = AltwrightNS:GetRealmCharactersSorted()
     scrollFrame.content.FactionIcons = scrollFrame.content.FactionIcons or {}
     scrollFrame.content.RaceIcons = scrollFrame.content.RaceIcons or {}
     scrollFrame.content.ClassIcons = scrollFrame.content.ClassIcons or {}
     scrollFrame.content.CharNames = scrollFrame.content.CharNames or {}
     for i, name in ipairs(characters) do
-         local char = AltinatorDB.global.characters[name]
-         AltinatorNS:CreateCharacterName(scrollFrame.content, i, char, scrollFrame.content, _PADDING, _HEIGHT, _ICON_SIZE)
+         local char = AltwrightDB.global.characters[name]
+         AltwrightNS:CreateCharacterName(scrollFrame.content, i, char, scrollFrame.content, _PADDING, _HEIGHT, _ICON_SIZE)
          
          local cooldowns = {}
          local profIndex = 0;
          for id, profession in pairs(char.Professions) do
             CreateProfessionTexture(char, scrollFrame.content, i, scrollFrame.content.FactionIcons[i], 165, _ICON_SIZE, profIndex, id, profession)
-            local profCooldowns = AltinatorNS.AltinatorData:GetProfessionCooldowns(profession)
+            local profCooldowns = AltwrightNS.AltwrightData:GetProfessionCooldowns(profession)
             for _, cd in ipairs(profCooldowns) do
                --print("CD found for " .. name .. " profession " .. profession.Name)
                table.insert(cooldowns, cd)
@@ -100,7 +100,7 @@ function AltinatorProfessionFrame:Initialize(self)
          end
          for id, profession in pairs(char.ProfessionsSecondairy) do
             CreateProfessionTexture(char, scrollFrame.content, i, scrollFrame.content.FactionIcons[i], 165, _ICON_SIZE, profIndex, id, profession)
-            local secCooldowns = AltinatorNS.AltinatorData:GetProfessionCooldowns(profession)
+            local secCooldowns = AltwrightNS.AltwrightData:GetProfessionCooldowns(profession)
             for _, cd in ipairs(secCooldowns) do
                --print("Secondairy CD found for " .. name .. " profession " .. profession.Name)
                table.insert(cooldowns, cd)
@@ -114,13 +114,13 @@ function AltinatorProfessionFrame:Initialize(self)
          scrollFrame.content.ProfessionCooldownTexts[i]:SetPoint("LEFT", scrollFrame.content.FactionIcons[i], "LEFT", 615, 0)
          if #cooldowns > 0 then
             scrollFrame.content.ProfessionCooldownTexts[i]:SetScript("OnEnter", function(self)
-               AltinatorNS.AltinatorTooltip:SetOwner(scrollFrame.content, "ANCHOR_CURSOR")
-               AltinatorNS.AltinatorTooltip:SetText(L["ProfessionCooldowns"])
-               GetProfessionCooldownTooltip(AltinatorNS.AltinatorTooltip, cooldowns)
-               AltinatorNS.AltinatorTooltip:Show()
+               AltwrightNS.AltwrightTooltip:SetOwner(scrollFrame.content, "ANCHOR_CURSOR")
+               AltwrightNS.AltwrightTooltip:SetText(L["ProfessionCooldowns"])
+               GetProfessionCooldownTooltip(AltwrightNS.AltwrightTooltip, cooldowns)
+               AltwrightNS.AltwrightTooltip:Show()
             end)
             scrollFrame.content.ProfessionCooldownTexts[i]:SetScript("OnLeave", function(self)
-               AltinatorNS.AltinatorTooltip:Hide()
+               AltwrightNS.AltwrightTooltip:Hide()
             end)
 
             if #cooldowns == 1 then

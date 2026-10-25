@@ -1,30 +1,30 @@
-local AddonName, AltinatorNS = ...
+local AddonName, AltwrightNS = ...
 
-local C = AltinatorNS.C
+local C = AltwrightNS.C
 
 local recipeLib = LibStub("LibRecipes-3.0")
 
-AltinatorNS.AltinatorGameTooltip = {}
-local AltinatorGameTooltip = AltinatorNS.AltinatorGameTooltip
+AltwrightNS.AltwrightGameTooltip = {}
+local AltwrightGameTooltip = AltwrightNS.AltwrightGameTooltip
 
 local GameTooltipReady = false
 
 local function GetRecipeLevel(link)
-    local AltinatorFrame = AltinatorNS.AltinatorAddon:GetMainFrame()
-    AltinatorNS.AltinatorTooltip:SetOwner(AltinatorFrame, "ANCHOR_LEFT")
-    AltinatorNS.AltinatorTooltip:ClearLines()
-    AltinatorNS.AltinatorTooltip:SetHyperlink(link)
+    local AltwrightFrame = AltwrightNS.AltwrightAddon:GetMainFrame()
+    AltwrightNS.AltwrightTooltip:SetOwner(AltwrightFrame, "ANCHOR_LEFT")
+    AltwrightNS.AltwrightTooltip:ClearLines()
+    AltwrightNS.AltwrightTooltip:SetHyperlink(link)
 	
-	local tooltipName = AltinatorNS.AltinatorTooltip:GetName()
+	local tooltipName = AltwrightNS.AltwrightTooltip:GetName()
 	
-   for i = 1, select("#", AltinatorNS.AltinatorTooltip:GetRegions()) do
-      local region = select(i, AltinatorNS.AltinatorTooltip:GetRegions())
+   for i = 1, select("#", AltwrightNS.AltwrightTooltip:GetRegions()) do
+      local region = select(i, AltwrightNS.AltwrightTooltip:GetRegions())
       if region and region:GetObjectType() == "FontString" then
          local tooltipText = region:GetText()
          if tooltipText then
             local _, _, rLevel = string.find(tooltipText, "%((%d+)%)")
             if rLevel then
-               AltinatorNS.AltinatorTooltip:Hide()
+               AltwrightNS.AltwrightTooltip:Hide()
                --print("Recipe required level: " .. rLevel)
                return tonumber(rLevel)
             end
@@ -54,7 +54,7 @@ local function CreateCharacterLearnTooltipLines(charsCouldLearn, profId, require
    if charsCouldLearn and #charsCouldLearn > 0 then
       for i, char in ipairs(charsCouldLearn) do
          local cr, cg, cb, web = GetClassColor(char.Class.File)
-         local prof = AltinatorNS.AltinatorData:GetCharacterProfession(char, profId)
+         local prof = AltwrightNS.AltwrightData:GetCharacterProfession(char, profId)
          --print("prof for " .. char.Name .. ": " .. (prof and prof.Name or "nil") .. ", skill: " .. (prof and prof.Skill or "nil") .. ", requiredSkill: " .. (requiredSkill or "nil"))
          if prof and prof.Skill >= requiredSkill then
             table.insert(learnedBy, "\124c" .. web .. char.Name .. "\124r (" .. prof.Skill .. ")")
@@ -106,13 +106,13 @@ local function AddCharacterLines(tooltip, lines)
 end
 
 local function GetTooltipLines(link)
-   local AltinatorFrame = AltinatorNS.AltinatorAddon:GetMainFrame()
-   AltinatorNS.AltinatorTooltip:SetOwner(AltinatorFrame, "ANCHOR_LEFT")
-   AltinatorNS.AltinatorTooltip:ClearLines()
-   AltinatorNS.AltinatorTooltip:SetHyperlink(link)
+   local AltwrightFrame = AltwrightNS.AltwrightAddon:GetMainFrame()
+   AltwrightNS.AltwrightTooltip:SetOwner(AltwrightFrame, "ANCHOR_LEFT")
+   AltwrightNS.AltwrightTooltip:ClearLines()
+   AltwrightNS.AltwrightTooltip:SetHyperlink(link)
    local lines = {}
-   for i = 1, select("#", AltinatorNS.AltinatorTooltip:GetRegions()) do
-      local region = select(i, AltinatorNS.AltinatorTooltip:GetRegions())
+   for i = 1, select("#", AltwrightNS.AltwrightTooltip:GetRegions()) do
+      local region = select(i, AltwrightNS.AltwrightTooltip:GetRegions())
       if region and region:GetObjectType() == "FontString" then
          local text = region:GetText()
          if text then
@@ -120,7 +120,7 @@ local function GetTooltipLines(link)
          end
       end
    end
-   AltinatorNS.AltinatorTooltip:Hide()
+   AltwrightNS.AltwrightTooltip:Hide()
    return lines
 end
 
@@ -147,7 +147,7 @@ local function ClassBookTooltip_Add(tooltip, itemLink, itemName)
       return
    end
 
-   local knownChars, couldLearnChars = AltinatorNS.AltinatorData:ClassBookKnownOrLearnable(itemName, classNames)
+   local knownChars, couldLearnChars = AltwrightNS.AltwrightData:ClassBookKnownOrLearnable(itemName, classNames)
    local knownText = CreateCharacterKnownByTooltipLines(knownChars)
    local learnText = CreateClassBookLearnTooltipLines(couldLearnChars, requiredLevel)
    if not knownText and not learnText then
@@ -164,7 +164,7 @@ end
 
 local function GameTooltip_Add(tooltip, itemLink)
 
-   if AltinatorNS.AltinatorDB.profile.settings.hideRecipeTooltips then
+   if AltwrightNS.AltwrightDB.profile.settings.hideRecipeTooltips then
       return
    end
 
@@ -191,28 +191,28 @@ local function GameTooltip_Add(tooltip, itemLink)
    if success then
       if spellId or itemId then
          local knownChars, couldLearnChars, knownText, learnText
-         AltinatorNS.AltinatorCache.Recipes = AltinatorNS.AltinatorCache.Recipes or {}
+         AltwrightNS.AltwrightCache.Recipes = AltwrightNS.AltwrightCache.Recipes or {}
          if spellId then
-            AltinatorNS.AltinatorCache.Recipes.Spells = AltinatorNS.AltinatorCache.Recipes.Spells or {}
-            AltinatorNS.AltinatorCache.Recipes.Spells[spellId] = AltinatorNS.AltinatorCache.Recipes.Spells[spellId] or {}
-            if not AltinatorNS.AltinatorCache.Recipes.Spells[spellId].knownText and not AltinatorNS.AltinatorCache.Recipes.Spells[spellId].learnText then
-               knownChars, couldLearnChars = AltinatorNS.AltinatorData:CharacterProfessionRecipeKnownOrLearnable(profId, spellId, createdItemId)
-               AltinatorNS.AltinatorCache.Recipes.Spells[spellId].knownText = CreateCharacterKnownByTooltipLines(knownChars)
-               AltinatorNS.AltinatorCache.Recipes.Spells[spellId].learnText = CreateCharacterLearnTooltipLines(couldLearnChars, profId, requiredSkill)
+            AltwrightNS.AltwrightCache.Recipes.Spells = AltwrightNS.AltwrightCache.Recipes.Spells or {}
+            AltwrightNS.AltwrightCache.Recipes.Spells[spellId] = AltwrightNS.AltwrightCache.Recipes.Spells[spellId] or {}
+            if not AltwrightNS.AltwrightCache.Recipes.Spells[spellId].knownText and not AltwrightNS.AltwrightCache.Recipes.Spells[spellId].learnText then
+               knownChars, couldLearnChars = AltwrightNS.AltwrightData:CharacterProfessionRecipeKnownOrLearnable(profId, spellId, createdItemId)
+               AltwrightNS.AltwrightCache.Recipes.Spells[spellId].knownText = CreateCharacterKnownByTooltipLines(knownChars)
+               AltwrightNS.AltwrightCache.Recipes.Spells[spellId].learnText = CreateCharacterLearnTooltipLines(couldLearnChars, profId, requiredSkill)
             end
-            knownText = AltinatorNS.AltinatorCache.Recipes.Spells[spellId].knownText or nil
-            learnText = AltinatorNS.AltinatorCache.Recipes.Spells[spellId].learnText or nil
+            knownText = AltwrightNS.AltwrightCache.Recipes.Spells[spellId].knownText or nil
+            learnText = AltwrightNS.AltwrightCache.Recipes.Spells[spellId].learnText or nil
          end
          if itemId then
-            AltinatorNS.AltinatorCache.Recipes.Items = AltinatorNS.AltinatorCache.Recipes.Items or {}
-            AltinatorNS.AltinatorCache.Recipes.Items[itemId] = AltinatorNS.AltinatorCache.Recipes.Items[itemId] or {}
-            if not AltinatorNS.AltinatorCache.Recipes.Items[itemId].knownText and not AltinatorNS.AltinatorCache.Recipes.Items[itemId].learnText then
-               knownChars, couldLearnChars = knownChars, couldLearnChars or AltinatorNS.AltinatorData:CharacterProfessionRecipeKnownOrLearnable(profId, spellId, createdItemId)
-               AltinatorNS.AltinatorCache.Recipes.Items[itemId].knownText = CreateCharacterKnownByTooltipLines(knownChars)
-               AltinatorNS.AltinatorCache.Recipes.Items[itemId].learnText = CreateCharacterLearnTooltipLines(couldLearnChars, profId, requiredSkill)
+            AltwrightNS.AltwrightCache.Recipes.Items = AltwrightNS.AltwrightCache.Recipes.Items or {}
+            AltwrightNS.AltwrightCache.Recipes.Items[itemId] = AltwrightNS.AltwrightCache.Recipes.Items[itemId] or {}
+            if not AltwrightNS.AltwrightCache.Recipes.Items[itemId].knownText and not AltwrightNS.AltwrightCache.Recipes.Items[itemId].learnText then
+               knownChars, couldLearnChars = knownChars, couldLearnChars or AltwrightNS.AltwrightData:CharacterProfessionRecipeKnownOrLearnable(profId, spellId, createdItemId)
+               AltwrightNS.AltwrightCache.Recipes.Items[itemId].knownText = CreateCharacterKnownByTooltipLines(knownChars)
+               AltwrightNS.AltwrightCache.Recipes.Items[itemId].learnText = CreateCharacterLearnTooltipLines(couldLearnChars, profId, requiredSkill)
             end
-            knownText = AltinatorNS.AltinatorCache.Recipes.Items[itemId].knownText or nil
-            learnText = AltinatorNS.AltinatorCache.Recipes.Items[itemId].learnText or nil
+            knownText = AltwrightNS.AltwrightCache.Recipes.Items[itemId].knownText or nil
+            learnText = AltwrightNS.AltwrightCache.Recipes.Items[itemId].learnText or nil
          end
 
          if not knownText and not learnText then
@@ -250,7 +250,7 @@ local function GameTooltip_SetCraftItem(tooltip, recipeIndex, reagentIndex)
 	GameTooltip_Add(tooltip, link)
 end
 
-function AltinatorGameTooltip:Initialize()
+function AltwrightGameTooltip:Initialize()
    GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_OnTooltipSetItem)
    GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
    hooksecurefunc(GameTooltip, "SetCraftItem", GameTooltip_SetCraftItem)

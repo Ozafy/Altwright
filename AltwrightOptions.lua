@@ -1,25 +1,25 @@
-local AddonName, AltinatorNS = ...
+local AddonName, AltwrightNS = ...
 
-local C = AltinatorNS.C
+local C = AltwrightNS.C
 local L = LibStub("AceLocale-3.0"):GetLocale(AddonName)
 
-local Altinatoricon = LibStub("LibDBIcon-1.0")
-local AltinatorOptionsCategory, AltinatorOptionsLayout = Settings.RegisterVerticalLayoutCategory(AddonName)
-local AltinatorHideCharacterCategory, AltinatorHideCharacterLayout = Settings.RegisterVerticalLayoutSubcategory(AltinatorOptionsCategory, L["OptionHideCharacter"])
+local Altwrighticon = LibStub("LibDBIcon-1.0")
+local AltwrightOptionsCategory, AltwrightOptionsLayout = Settings.RegisterVerticalLayoutCategory(AddonName)
+local AltwrightHideCharacterCategory, AltwrightHideCharacterLayout = Settings.RegisterVerticalLayoutSubcategory(AltwrightOptionsCategory, L["OptionHideCharacter"])
 
 
-local AltinatorOptions = {}
-AltinatorNS.AltinatorOptions = AltinatorOptions
-AltinatorNS.AltinatorOptions.Category = AltinatorOptionsCategory
-AltinatorNS.AltinatorOptions.Layout = AltinatorOptionsLayout
-AltinatorNS.AltinatorOptions.HideCharacterCategory = AltinatorHideCharacterCategory
-AltinatorNS.AltinatorOptions.HideCharacterLayout = AltinatorHideCharacterLayout
+local AltwrightOptions = {}
+AltwrightNS.AltwrightOptions = AltwrightOptions
+AltwrightNS.AltwrightOptions.Category = AltwrightOptionsCategory
+AltwrightNS.AltwrightOptions.Layout = AltwrightOptionsLayout
+AltwrightNS.AltwrightOptions.HideCharacterCategory = AltwrightHideCharacterCategory
+AltwrightNS.AltwrightOptions.HideCharacterLayout = AltwrightHideCharacterLayout
 
 local function OnMinimapSettingChanged(setting, value)
    if value then
-      Altinatoricon:Hide(AddonName)
+      Altwrighticon:Hide(AddonName)
    else
-      Altinatoricon:Show(AddonName)
+      Altwrighticon:Show(AddonName)
    end
 end
 
@@ -35,7 +35,7 @@ end
 
 local function GetAllCharactersSortedByRealm()
    local characterNames = {}
-   for key, char in pairs(AltinatorNS.AltinatorDB.global.characters) do
+   for key, char in pairs(AltwrightNS.AltwrightDB.global.characters) do
          table.insert(characterNames, char.Realm .. "-" .. char.Name)
    end
    table.sort(characterNames)
@@ -59,16 +59,16 @@ local function DeleteCharacter()
       return
    else
       local realm, name = strsplit("-", charToDelete, 2)
-      local char = AltinatorNS.AltinatorDB.global.characters[name .. "-" .. realm]
+      local char = AltwrightNS.AltwrightDB.global.characters[name .. "-" .. realm]
       if char == nil then
-         print("Character '" .. name .. "' from realm '" .. realm .. "' not found in Altinator database.")
-         Settings.SetValue("Altinator_Character_To_Delete", "")
+         print("Character '" .. name .. "' from realm '" .. realm .. "' not found in Altwright database.")
+         Settings.SetValue("Altwright_Character_To_Delete", "")
          return
       end
       local cr, cg, cb, web = GetClassColor(char.Class.File)
-      print("Deleting '\124c" .. web .. name .. "\124r' from realm '" .. realm .. "' from Altinator database.")
-      AltinatorNS.AltinatorDB.global.characters[name .. "-" .. realm] = nil
-      Settings.SetValue("Altinator_Character_To_Delete", "")
+      print("Deleting '\124c" .. web .. name .. "\124r' from realm '" .. realm .. "' from Altwright database.")
+      AltwrightNS.AltwrightDB.global.characters[name .. "-" .. realm] = nil
+      Settings.SetValue("Altwright_Character_To_Delete", "")
    end
 end
 
@@ -76,57 +76,57 @@ function CreateOptionsCategory()
     local name = L["OptionsSettingsHeader"];
     local data = { name = name };
     local initializer = Settings.CreateSettingInitializer("SettingsListSectionHeaderTemplate", data);
-    AltinatorOptionsLayout:AddInitializer(initializer);
+    AltwrightOptionsLayout:AddInitializer(initializer);
 
 	local minimapSetting = Settings.RegisterAddOnSetting(
-      AltinatorOptionsCategory,
-      "Altinator_Minimap_Toggle",
+      AltwrightOptionsCategory,
+      "Altwright_Minimap_Toggle",
       "hide",
-      AltinatorNS.AltinatorDB.profile.minimap,
+      AltwrightNS.AltwrightDB.profile.minimap,
       Settings.VarType.Boolean,
       L["OptionMinimap"],
       Settings.Default.False
    )
 	minimapSetting:SetValueChangedCallback(OnMinimapSettingChanged)
-	Settings.CreateCheckbox(AltinatorOptionsCategory, minimapSetting, L["OptionMinimap"])
+	Settings.CreateCheckbox(AltwrightOptionsCategory, minimapSetting, L["OptionMinimap"])
 
 	local tooltipSetting = Settings.RegisterAddOnSetting(
-      AltinatorOptionsCategory,
-      "Altinator_Tooltip_Toggle",
+      AltwrightOptionsCategory,
+      "Altwright_Tooltip_Toggle",
       "hideRecipeTooltips",
-      AltinatorNS.AltinatorDB.profile.settings,
+      AltwrightNS.AltwrightDB.profile.settings,
       Settings.VarType.Boolean,
       L["OptionTooltip"],
       Settings.Default.False
    )
-	Settings.CreateCheckbox(AltinatorOptionsCategory, tooltipSetting, L["OptionTooltipText"])
+	Settings.CreateCheckbox(AltwrightOptionsCategory, tooltipSetting, L["OptionTooltipText"])
 
 	local loginAlertSetting = Settings.RegisterAddOnSetting(
-      AltinatorOptionsCategory,
-      "Altinator_LoginAlert_Toggle",
+      AltwrightOptionsCategory,
+      "Altwright_LoginAlert_Toggle",
       "hideLoginAlert",
-      AltinatorNS.AltinatorDB.profile.settings,
+      AltwrightNS.AltwrightDB.profile.settings,
       Settings.VarType.Boolean,
       L["OptionLoginAlert"],
       Settings.Default.False
    )
-	Settings.CreateCheckbox(AltinatorOptionsCategory, loginAlertSetting, L["OptionLoginAlertText"])
+	Settings.CreateCheckbox(AltwrightOptionsCategory, loginAlertSetting, L["OptionLoginAlertText"])
 
     local name = L["OptionsDeleteHeader"];
     local data = { name = name };
     local initializer = Settings.CreateSettingInitializer("SettingsListSectionHeaderTemplate", data);
-    AltinatorOptionsLayout:AddInitializer(initializer);
+    AltwrightOptionsLayout:AddInitializer(initializer);
 
 	local deleteCharacterSetting = Settings.RegisterProxySetting(
-		AltinatorOptionsCategory,
-		"Altinator_Character_To_Delete",
+		AltwrightOptionsCategory,
+		"Altwright_Character_To_Delete",
 		Settings.VarType.String,
 		L["OptionSelectCharacterToDelete"],
 		"",
 		GetCharacterToDelete,
 		SetCharacterToDelete
 	)
-	Settings.CreateDropdown(AltinatorOptionsCategory, deleteCharacterSetting, GetAllCharactersSortedByRealmContainer)
+	Settings.CreateDropdown(AltwrightOptionsCategory, deleteCharacterSetting, GetAllCharactersSortedByRealmContainer)
 
 	local deleteButtonInitializer = CreateSettingsButtonInitializer(
 		L["OptionDeleteSelected"], -- name
@@ -138,10 +138,10 @@ function CreateOptionsCategory()
 		nil
 	)
 
-	local addonLayout = SettingsPanel:GetLayout(AltinatorOptionsCategory)
+	local addonLayout = SettingsPanel:GetLayout(AltwrightOptionsCategory)
 	addonLayout:AddInitializer(deleteButtonInitializer)
 
-   Settings.RegisterAddOnCategory(AltinatorOptionsCategory)
+   Settings.RegisterAddOnCategory(AltwrightOptionsCategory)
 end
 
 function CreateHideCharacterCategory()
@@ -150,20 +150,20 @@ function CreateHideCharacterCategory()
       local realm, name = strsplit("-", name, 2)
       local char = name .. "-" .. realm
       local hideCharacterSetting = Settings.RegisterAddOnSetting(
-         AltinatorHideCharacterCategory,
-         "Altinator_Character_To_Hide" .. i,
+         AltwrightHideCharacterCategory,
+         "Altwright_Character_To_Hide" .. i,
          char,
-         AltinatorNS.AltinatorDB.global.hiddenCharacters,
+         AltwrightNS.AltwrightDB.global.hiddenCharacters,
          Settings.VarType.Boolean,
          char,
          Settings.Default.False
       )
-      Settings.CreateCheckbox(AltinatorHideCharacterCategory, hideCharacterSetting, L["OptionHideCharacterTooltipText"])
+      Settings.CreateCheckbox(AltwrightHideCharacterCategory, hideCharacterSetting, L["OptionHideCharacterTooltipText"])
    end
-   Settings.RegisterAddOnCategory(AltinatorHideCharacterCategory)
+   Settings.RegisterAddOnCategory(AltwrightHideCharacterCategory)
 end
 
-function AltinatorOptions:Initialize()
+function AltwrightOptions:Initialize()
       CreateOptionsCategory()
       CreateHideCharacterCategory()
 end

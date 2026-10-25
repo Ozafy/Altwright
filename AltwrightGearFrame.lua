@@ -1,12 +1,12 @@
-local AddonName, AltinatorNS = ...
+local AddonName, AltwrightNS = ...
 
-local C = AltinatorNS.C
+local C = AltwrightNS.C
 local L = LibStub("AceLocale-3.0"):GetLocale(AddonName)
 
-local AltinatorGearFrame = {}
-AltinatorNS.AltinatorGearFrame = AltinatorGearFrame
+local AltwrightGearFrame = {}
+AltwrightNS.AltwrightGearFrame = AltwrightGearFrame
 
-function AltinatorGearFrame:Initialize(self)
+function AltwrightGearFrame:Initialize(self)
     if Syndicator and Syndicator.API.IsReady() then
         local _PADDING = 5
         local _WIDTH = C["Width"]-50
@@ -23,7 +23,7 @@ function AltinatorGearFrame:Initialize(self)
             self.Frames["EmptyTextureFrame" .. i] = self.Frames["EmptyTextureFrame" .. i] or CreateFrame("Frame", nil, self)
             self.Frames["EmptyTextureFrame" .. i]:SetSize(_ICON_SIZE, _ICON_SIZE)
             self.Frames["EmptyTextureFrame" .. i]:SetPoint("LEFT", self.Header, "LEFT", ((i+1)*(_ICON_SIZE+_ICON_PADDING))+96, 0)
-            AltinatorNS:CreateInnerBorder(self.Frames["EmptyTextureFrame" .. i], 6)
+            AltwrightNS:CreateInnerBorder(self.Frames["EmptyTextureFrame" .. i], 6)
 
             self.Frames["EmptyTextureFrame" .. i].EmptyTexture = self.Frames["EmptyTextureFrame" .. i].EmptyTexture or self.Frames["EmptyTextureFrame" .. i]:CreateTexture(nil, "BACKGROUND")
             self.Frames["EmptyTextureFrame" .. i].EmptyTexture:SetSize(_ICON_SIZE, _ICON_SIZE)
@@ -32,24 +32,24 @@ function AltinatorGearFrame:Initialize(self)
 
             self.Frames["EmptyTextureFrame" .. i].TooltipText = L["EquipmentSlots"][i]
             self.Frames["EmptyTextureFrame" .. i]:SetScript("OnEnter", function(self)
-                AltinatorNS.AltinatorTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                AltinatorNS.AltinatorTooltip:SetText(self.TooltipText)
+                AltwrightNS.AltwrightTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                AltwrightNS.AltwrightTooltip:SetText(self.TooltipText)
             end)
             self.Frames["EmptyTextureFrame" .. i]:SetScript("OnLeave", function(self)
-                AltinatorNS.AltinatorTooltip:Hide()
+                AltwrightNS.AltwrightTooltip:Hide()
             end)
         end
 
-        local scrollFrame = self.ScrollFrame or AltinatorNS:CreateScrollFrame(self, nil, (_ICON_SIZE * -1)-_ICON_PADDING)
-        AltinatorNS:HideRowWidgets(scrollFrame.content)
+        local scrollFrame = self.ScrollFrame or AltwrightNS:CreateScrollFrame(self, nil, (_ICON_SIZE * -1)-_ICON_PADDING)
+        AltwrightNS:HideRowWidgets(scrollFrame.content)
 
         local totalCharacters = 0
-        local characters = AltinatorNS:GetRealmCharactersSorted()
+        local characters = AltwrightNS:GetRealmCharactersSorted()
         scrollFrame.content.ClassFrames = scrollFrame.content.ClassFrames or {}
         scrollFrame.content.CharNames = scrollFrame.content.CharNames or {}
 
         for _, name in ipairs(characters) do
-            local char = AltinatorDB.global.characters[name]
+            local char = AltwrightDB.global.characters[name]
             local charSyndicator = Syndicator.API.GetByCharacterFullName(name)
             if (charSyndicator) then
                 local i = totalCharacters + 1 -- row index, skipped characters must not leave gaps
@@ -75,9 +75,9 @@ function AltinatorGearFrame:Initialize(self)
                     scrollFrame.content["item" .. i .. "i" .. j]:SetSize(_ICON_SIZE, _ICON_SIZE)
                     scrollFrame.content["item" .. i .. "i" .. j]:SetPoint("LEFT", scrollFrame.content.ClassFrames[i], "LEFT", (j*(_ICON_SIZE+_ICON_PADDING))+96, 0)
                     if item["quality"] then
-                        AltinatorNS:CreateInnerBorder(scrollFrame.content["item" .. i .. "i" .. j], item["quality"])
+                        AltwrightNS:CreateInnerBorder(scrollFrame.content["item" .. i .. "i" .. j], item["quality"])
                     else
-                        AltinatorNS:CreateInnerBorder(scrollFrame.content["item" .. i .. "i" .. j], -1)
+                        AltwrightNS:CreateInnerBorder(scrollFrame.content["item" .. i .. "i" .. j], -1)
                     end
                     scrollFrame.content["item" .. i .. "i" .. j].Texture = scrollFrame.content["item" .. i .. "i" .. j].Texture or scrollFrame.content["item" .. i .. "i" .. j]:CreateTexture(nil, "BACKGROUND")
                     scrollFrame.content["item" .. i .. "i" .. j].Texture:SetSize(_ICON_SIZE, _ICON_SIZE)
@@ -92,13 +92,13 @@ function AltinatorGearFrame:Initialize(self)
                         scrollFrame.content["item" .. i .. "i" .. j].TooltipItemLink = item["itemLink"]
                         scrollFrame.content["item" .. i .. "i" .. j]:RegisterForClicks("AnyUp")
                         scrollFrame.content["item" .. i .. "i" .. j]:SetScript("OnClick", function(self, button, down)
-                            AltinatorNS:ItemOnClick(self)
+                            AltwrightNS:ItemOnClick(self)
                         end)
                         scrollFrame.content["item" .. i .. "i" .. j]:SetScript("OnEnter", function(self)
-                            AltinatorNS:ItemOnEnter(self)
+                            AltwrightNS:ItemOnEnter(self)
                         end)
                         scrollFrame.content["item" .. i .. "i" .. j]:SetScript("OnLeave", function(self)
-                            AltinatorNS:ItemOnLeave(self)
+                            AltwrightNS:ItemOnLeave(self)
                         end)
                     else
                         scrollFrame.content["item" .. i .. "i" .. j]:SetScript("OnEnter", nil)

@@ -1,12 +1,12 @@
-local AddonName, AltinatorNS = ...
+local AddonName, AltwrightNS = ...
 
-local C = AltinatorNS.C
+local C = AltwrightNS.C
 local L = LibStub("AceLocale-3.0"):GetLocale(AddonName)
 
 local ICON_SIZE = 32
 
-local AltinatorSearchFrame = {}
-AltinatorNS.AltinatorSearchFrame = AltinatorSearchFrame
+local AltwrightSearchFrame = {}
+AltwrightNS.AltwrightSearchFrame = AltwrightSearchFrame
 
 local function Compare(item1, iterm2)
     if item1["itemName"] == iterm2["itemName"] then
@@ -17,7 +17,7 @@ end
 
 
 local function SearchResult(result)
-    local frame = AltinatorNS.AltinatorSearchResultFrame
+    local frame = AltwrightNS.AltwrightSearchResultFrame
     frame.Frames = frame.Frames or {}
     local totalResults = 0
 
@@ -49,15 +49,15 @@ local function SearchResult(result)
     end
     table.sort(result, Compare)
     for i, item in pairs(result) do
-        local char = AltinatorDB.global.characters[item["source"]["character"]]
-        if char and (AltinatorIncludeHiddenCharsCheckbox:GetChecked() or not AltinatorDB.global.hiddenCharacters[item["source"]["character"]]) and char.Realm==AltinatorNS.AltinatorAddon.CurrentCharacter.Realm then
+        local char = AltwrightDB.global.characters[item["source"]["character"]]
+        if char and (AltwrightIncludeHiddenCharsCheckbox:GetChecked() or not AltwrightDB.global.hiddenCharacters[item["source"]["character"]]) and char.Realm==AltwrightNS.AltwrightAddon.CurrentCharacter.Realm then
             --local itemName, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(item["itemID"])
             frame.Frames[totalResults] = frame.Frames[totalResults] or CreateFrame("BUTTON", nil, frame)
             frame.Frames[totalResults].Frames = frame.Frames[totalResults].Frames or {}
             frame.Frames[totalResults]:Show()
             frame.Frames[totalResults]:SetSize(ICON_SIZE, ICON_SIZE)
             frame.Frames[totalResults]:SetPoint("TOPLEFT", 5, (_HEIGHT * -1 * (totalResults)))
-            AltinatorNS:CreateInnerBorder(frame.Frames[totalResults], item["quality"])
+            AltwrightNS:CreateInnerBorder(frame.Frames[totalResults], item["quality"])
             frame.Frames[totalResults].Frames["texture"] = frame.Frames[totalResults].Frames["texture"] or frame.Frames[totalResults]:CreateTexture(nil, "BACKGROUND")
             frame.Frames[totalResults].Frames["texture"]:SetSize(ICON_SIZE, ICON_SIZE)
             frame.Frames[totalResults].Frames["texture"]:SetPoint("CENTER")
@@ -70,13 +70,13 @@ local function SearchResult(result)
             frame.Frames[totalResults].TooltipItemLink = item["itemLink"]
             frame.Frames[totalResults]:RegisterForClicks("AnyUp")
             frame.Frames[totalResults]:SetScript("OnClick", function(self, button, down)
-                AltinatorNS:ItemOnClick(self)
+                AltwrightNS:ItemOnClick(self)
             end)
             frame.Frames[totalResults]:SetScript("OnEnter", function(self)
-                AltinatorNS:ItemOnEnter(self)
+                AltwrightNS:ItemOnEnter(self)
             end)
                 frame.Frames[totalResults]:SetScript("OnLeave", function(self)
-                AltinatorNS:ItemOnLeave(self)
+                AltwrightNS:ItemOnLeave(self)
             end)
 
             frame.Frames[totalResults].Frames["itemNameString"] = frame.Frames[totalResults].Frames["itemNameString"] or frame.Frames[totalResults]:CreateFontString(nil,"ARTWORK","GameFontHighlight")
@@ -117,7 +117,7 @@ local function SearchItems(searchTerm)
     Syndicator.Search.RequestSearchEverywhereResults(searchTerm, SearchResult)
 end
 
-function AltinatorSearchFrame:Initialize(self)
+function AltwrightSearchFrame:Initialize(self)
     local _WIDTH = C["Width"]-50
     local _HEIGHT = 20
     if Syndicator and Syndicator.API.IsReady() then
@@ -148,10 +148,10 @@ function AltinatorSearchFrame:Initialize(self)
             self.SearchBox:ClearFocus()
         end)
 
-        self.IncludeHiddenCharsCheckbox = self.IncludeHiddenCharsCheckbox or CreateFrame("CheckButton", "AltinatorIncludeHiddenCharsCheckbox", self, "UICheckButtonTemplate");
+        self.IncludeHiddenCharsCheckbox = self.IncludeHiddenCharsCheckbox or CreateFrame("CheckButton", "AltwrightIncludeHiddenCharsCheckbox", self, "UICheckButtonTemplate");
         self.IncludeHiddenCharsCheckbox:SetPoint("LEFT", self.SearchButton, "RIGHT", 10, 0)
         -- set text on the item doesn't work vOv
-        AltinatorIncludeHiddenCharsCheckboxText:SetText(L["IncludeHiddenChars"]);
+        AltwrightIncludeHiddenCharsCheckboxText:SetText(L["IncludeHiddenChars"]);
 
         self.ItemHeader = self.ItemHeader or self:CreateFontString("HeaderName", "ARTWORK", "GameFontHighlight")
         self.ItemHeader:SetPoint("TOPLEFT", 5, -2 * _HEIGHT)
@@ -173,8 +173,8 @@ function AltinatorSearchFrame:Initialize(self)
         self.TotalOwnedHeader:SetPoint("LEFT", self.ItemHeader, "LEFT", ICON_SIZE + 650, 0)
         self.TotalOwnedHeader:SetText(L["SearchItemTotalOwned"])
 
-        local scrollFrame = self.ScrollFrame or AltinatorNS:CreateScrollFrame(self, nil, _HEIGHT * -3, nil, nil)
-        AltinatorNS.AltinatorSearchResultFrame = scrollFrame.content
+        local scrollFrame = self.ScrollFrame or AltwrightNS:CreateScrollFrame(self, nil, _HEIGHT * -3, nil, nil)
+        AltwrightNS.AltwrightSearchResultFrame = scrollFrame.content
 
         self:SetSize(C["Width"] - 42, C["Height"] - 50)
     else

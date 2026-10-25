@@ -1,18 +1,18 @@
-local AddonName, AltinatorNS = ...
+local AddonName, AltwrightNS = ...
 
-local C = AltinatorNS.C
+local C = AltwrightNS.C
 local L = LibStub("AceLocale-3.0"):GetLocale(AddonName)
 
-local AltinatorActivityFrame = {}
-AltinatorNS.AltinatorActivityFrame = AltinatorActivityFrame
+local AltwrightActivityFrame = {}
+AltwrightNS.AltwrightActivityFrame = AltwrightActivityFrame
 
-function AltinatorActivityFrame:Initialize(self)
+function AltwrightActivityFrame:Initialize(self)
     if Syndicator and Syndicator.API.IsReady() then
         local _PADDING = 5
         local _ICON_SIZE = 15
         local _HEIGHT = _ICON_SIZE + 5
 
-        local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+        local data = AltwrightNS.AltwrightAddon.CurrentCharacter
 
         self.NameHeader = self.NameHeader or self:CreateFontString("HeaderName", "ARTWORK", "GameFontHighlight")
         self.NameHeader:SetPoint("TOPLEFT", _PADDING, -10)
@@ -42,8 +42,8 @@ function AltinatorActivityFrame:Initialize(self)
         self.HonourHeader:SetPoint("LEFT", self.BoonedHeader, "LEFT", 125, 0)
         self.HonourHeader:SetText(L["Honour"])
 
-        local scrollFrame = self.ScrollFrame or AltinatorNS:CreateScrollFrame(self)
-        AltinatorNS:HideRowWidgets(scrollFrame.content)
+        local scrollFrame = self.ScrollFrame or AltwrightNS:CreateScrollFrame(self)
+        AltwrightNS:HideRowWidgets(scrollFrame.content)
 
         local currentTime = time()
         local totalCharacters = 0
@@ -51,7 +51,7 @@ function AltinatorActivityFrame:Initialize(self)
         local totalAuctions = 0
         local totalAuctionItems = 0
         local totalPlayed = 0
-        local characters = AltinatorNS:GetRealmCharactersSorted()
+        local characters = AltwrightNS:GetRealmCharactersSorted()
         scrollFrame.content.FactionIcons = scrollFrame.content.FactionIcons or {}
         scrollFrame.content.RaceIcons = scrollFrame.content.RaceIcons or {}
         scrollFrame.content.ClassIcons = scrollFrame.content.ClassIcons or {}
@@ -63,11 +63,11 @@ function AltinatorActivityFrame:Initialize(self)
         scrollFrame.content.HonourTexts = scrollFrame.content.HonourTexts or {}
         scrollFrame.content.BoonedTexts = scrollFrame.content.BoonedTexts or {}
         for _, name in ipairs(characters) do
-            local char = AltinatorDB.global.characters[name]
+            local char = AltwrightDB.global.characters[name]
             local charSyndicator = Syndicator.API.GetByCharacterFullName(name)
             if charSyndicator then
             local i = totalCharacters + 1 -- row index, skipped characters must not leave gaps
-            AltinatorNS:CreateCharacterName(scrollFrame.content, i, char, scrollFrame.content, _PADDING, _HEIGHT, _ICON_SIZE)
+            AltwrightNS:CreateCharacterName(scrollFrame.content, i, char, scrollFrame.content, _PADDING, _HEIGHT, _ICON_SIZE)
 
             scrollFrame.content.MailTexts[i] = scrollFrame.content.MailTexts[i] or scrollFrame.content:CreateFontString(nil,"ARTWORK","GameFontHighlight")
             scrollFrame.content.MailTexts[i]:Show()
@@ -87,18 +87,18 @@ function AltinatorActivityFrame:Initialize(self)
                 scrollFrame.content.MailTexts[i]:SetText("\124cnGREEN_FONT_COLOR:" .. charMails .. "\124r (\124cnYELLOW_FONT_COLOR:" .. #charMailsInTransit .. "\124r)")
                 if #charMailsInTransit>0 then
                     scrollFrame.content.MailTexts[i]:SetScript("OnEnter", function(self)
-                        AltinatorNS.AltinatorTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                        AltinatorNS.AltinatorTooltip:SetText(L["MailInTransit"])
+                        AltwrightNS.AltwrightTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                        AltwrightNS.AltwrightTooltip:SetText(L["MailInTransit"])
                         for _, arrivalTime in ipairs(charMailsInTransit) do
                             -- mail may have arrived since the frame was drawn, a negative span would show as ~24h
                             if arrivalTime > time() then
-                                AltinatorNS.AltinatorTooltip:AddLine(L["MailInTransit_ArrivesIn"] .. " " .. AltinatorNS:LongTimeSpanToString(arrivalTime - time()), 1, 1, 1)
+                                AltwrightNS.AltwrightTooltip:AddLine(L["MailInTransit_ArrivesIn"] .. " " .. AltwrightNS:LongTimeSpanToString(arrivalTime - time()), 1, 1, 1)
                             end
                         end
-                        AltinatorNS.AltinatorTooltip:Show()
+                        AltwrightNS.AltwrightTooltip:Show()
                     end)
                     scrollFrame.content.MailTexts[i]:SetScript("OnLeave", function(self)
-                        AltinatorNS.AltinatorTooltip:Hide()
+                        AltwrightNS.AltwrightTooltip:Hide()
                     end)
                 else
                     scrollFrame.content.MailTexts[i]:SetScript("OnEnter", nil)
@@ -134,7 +134,7 @@ function AltinatorActivityFrame:Initialize(self)
             scrollFrame.content.PlayedTexts[i] = scrollFrame.content.PlayedTexts[i] or scrollFrame.content:CreateFontString(nil,"ARTWORK","GameFontHighlight")
             scrollFrame.content.PlayedTexts[i]:Show()
             scrollFrame.content.PlayedTexts[i]:SetPoint("LEFT", scrollFrame.content.FactionIcons[i], "LEFT", 390, 0)
-            scrollFrame.content.PlayedTexts[i]:SetText(char.TimePlayed and AltinatorNS:LongTimeSpanToString(char.TimePlayed.Total) or "")
+            scrollFrame.content.PlayedTexts[i]:SetText(char.TimePlayed and AltwrightNS:LongTimeSpanToString(char.TimePlayed.Total) or "")
             totalPlayed = totalPlayed + (char.TimePlayed and char.TimePlayed.Total or 0)
 
             local lastPlayed = (char.LastLogout or char.LastLogin)
@@ -144,17 +144,17 @@ function AltinatorActivityFrame:Initialize(self)
             if name == data.FullName then
                 scrollFrame.content.LastPlayed[i]:SetText("\124cnGREEN_FONT_COLOR:" .. L["Online"] .. "\124r")
             else
-                scrollFrame.content.LastPlayed[i]:SetText(AltinatorNS:ShortTimeSpanToString(currentTime - lastPlayed))
+                scrollFrame.content.LastPlayed[i]:SetText(AltwrightNS:ShortTimeSpanToString(currentTime - lastPlayed))
             end
             local isOnline = name == data.FullName
             scrollFrame.content.LastPlayed[i]:SetScript("OnEnter", function(self)
-                AltinatorNS.AltinatorTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                AltinatorNS.AltinatorTooltip:SetText(isOnline and L["Online"] or L["LastLogout"])
+                AltwrightNS.AltwrightTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                AltwrightNS.AltwrightTooltip:SetText(isOnline and L["Online"] or L["LastLogout"])
                 local resting = L["NoData"]
                 if char.Resting ~= nil then
                     resting = char.Resting and ("\124cnGREEN_FONT_COLOR:" .. L["Yes"] .. "\124r") or L["No"]
                 end
-                AltinatorNS.AltinatorTooltip:AddDoubleLine(L["Resting"], resting, 1, 1, 1, 1, 1, 1)
+                AltwrightNS.AltwrightTooltip:AddDoubleLine(L["Resting"], resting, 1, 1, 1, 1, 1, 1)
                 local location = L["NoData"]
                 if char.Location and char.Location.Zone then
                     location = char.Location.Zone
@@ -162,11 +162,11 @@ function AltinatorActivityFrame:Initialize(self)
                         location = char.Location.SubZone .. ", " .. char.Location.Zone
                     end
                 end
-                AltinatorNS.AltinatorTooltip:AddDoubleLine(L["Location"], location, 1, 1, 1, 1, 1, 1)
-                AltinatorNS.AltinatorTooltip:Show()
+                AltwrightNS.AltwrightTooltip:AddDoubleLine(L["Location"], location, 1, 1, 1, 1, 1, 1)
+                AltwrightNS.AltwrightTooltip:Show()
             end)
             scrollFrame.content.LastPlayed[i]:SetScript("OnLeave", function(self)
-                AltinatorNS.AltinatorTooltip:Hide()
+                AltwrightNS.AltwrightTooltip:Hide()
             end)
 
             scrollFrame.content.BoonedTexts[i] = scrollFrame.content.BoonedTexts[i] or scrollFrame.content:CreateFontString(nil,"ARTWORK","GameFontHighlight")
@@ -175,16 +175,16 @@ function AltinatorActivityFrame:Initialize(self)
             if char.WorldBuffs and #char.WorldBuffs > 0 then
                 scrollFrame.content.BoonedTexts[i]:SetText("\124cnGREEN_FONT_COLOR:" .. #char.WorldBuffs .. "\124r")
                 scrollFrame.content.BoonedTexts[i]:SetScript("OnEnter", function(self)
-                    AltinatorNS.AltinatorTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                    AltinatorNS.AltinatorTooltip:SetText(L["BoonedBuffs"])
-                    AltinatorNS.AltinatorTooltip:AddLine(" ")
+                    AltwrightNS.AltwrightTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                    AltwrightNS.AltwrightTooltip:SetText(L["BoonedBuffs"])
+                    AltwrightNS.AltwrightTooltip:AddLine(" ")
                     for _, buff in ipairs(char.WorldBuffs) do
-                        AltinatorNS.AltinatorTooltip:AddDoubleLine(L["WorldBuffs"][buff.SpellId].name, AltinatorNS:LongTimeSpanToString(buff.ExpirationTime), 1, 1, 1)
+                        AltwrightNS.AltwrightTooltip:AddDoubleLine(L["WorldBuffs"][buff.SpellId].name, AltwrightNS:LongTimeSpanToString(buff.ExpirationTime), 1, 1, 1)
                     end
-                    AltinatorNS.AltinatorTooltip:Show()
+                    AltwrightNS.AltwrightTooltip:Show()
                 end)
                 scrollFrame.content.BoonedTexts[i]:SetScript("OnLeave", function(self)
-                    AltinatorNS.AltinatorTooltip:Hide()
+                    AltwrightNS.AltwrightTooltip:Hide()
                 end)
             else
                 scrollFrame.content.BoonedTexts[i]:SetText(L["No"])
@@ -198,7 +198,7 @@ function AltinatorActivityFrame:Initialize(self)
             scrollFrame.content.HonourTexts[i]:SetPoint("LEFT", scrollFrame.content.FactionIcons[i], "LEFT", 765, 0)
             char.Honour = char.Honour or { HKs = 0, Points = 0 }
             
-            if AltinatorNS:GetLastReset() > lastPlayed then
+            if AltwrightNS:GetLastReset() > lastPlayed then
                 char.Honour.HKs = 0
                 char.Honour.Points = 0
             end
@@ -231,7 +231,7 @@ function AltinatorActivityFrame:Initialize(self)
         scrollFrame.content.TotalPlayedString = scrollFrame.content.TotalPlayedString or scrollFrame.content:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
         scrollFrame.content.TotalPlayedString:Show()
         scrollFrame.content.TotalPlayedString:SetPoint("LEFT", scrollFrame.content.TotalName, "LEFT", 390, 0)
-        scrollFrame.content.TotalPlayedString:SetText(AltinatorNS:LongTimeSpanToString(totalPlayed))
+        scrollFrame.content.TotalPlayedString:SetText(AltwrightNS:LongTimeSpanToString(totalPlayed))
         scrollFrame.content:SetSize(C["Width"], _HEIGHT * (totalCharacters + 2))
     else
         self.NoDataFrame = self.NoDataFrame or self:CreateFontString(nil, "ARTWORK", "GameFontHighlight")

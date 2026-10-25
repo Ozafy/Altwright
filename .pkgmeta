@@ -1,5 +1,7 @@
-package-as: Altinator
+package-as: Altwright
 ignore:
   - README.md
   - Screenshots
+move-folders:
+  Altwright/Altinator: Altinator
 license-output: LICENSE

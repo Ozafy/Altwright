@@ -1,21 +1,21 @@
-local AddonName, AltinatorNS = ...
+local AddonName, AltwrightNS = ...
 
-local C = AltinatorNS.C
+local C = AltwrightNS.C
 local L = LibStub("AceLocale-3.0"):GetLocale(AddonName)
 
-local AltinatorOverviewFrame = {}
-AltinatorNS.AltinatorOverviewFrame = AltinatorOverviewFrame
+local AltwrightOverviewFrame = {}
+AltwrightNS.AltwrightOverviewFrame = AltwrightOverviewFrame
 
 local function bagsort(a, b)
    if not a or not b then
        return false
    end
-   local bagA = tonumber(AltinatorNS:SplitString(a, "_")[2])
-   local bagB = tonumber(AltinatorNS:SplitString(b, "_")[2])
+   local bagA = tonumber(AltwrightNS:SplitString(a, "_")[2])
+   local bagB = tonumber(AltwrightNS:SplitString(b, "_")[2])
    return bagA < bagB
 end
 
-function AltinatorOverviewFrame:Initialize(self)
+function AltwrightOverviewFrame:Initialize(self)
     local _PADDING = 5
     local _ICON_SIZE = 15
     local _HEIGHT = _ICON_SIZE + 5
@@ -49,12 +49,12 @@ function AltinatorOverviewFrame:Initialize(self)
     self.BankBagsHeader:SetText(L["BankBags"])
 
 
-    local scrollFrame = self.ScrollFrame or AltinatorNS:CreateScrollFrame(self)
-    AltinatorNS:HideRowWidgets(scrollFrame.content)
+    local scrollFrame = self.ScrollFrame or AltwrightNS:CreateScrollFrame(self)
+    AltwrightNS:HideRowWidgets(scrollFrame.content)
 
     local totalCharacters = 0
     local totalMoney = 0
-    local characters = AltinatorNS:GetRealmCharactersSorted()
+    local characters = AltwrightNS:GetRealmCharactersSorted()
     scrollFrame.content.FactionIcons = scrollFrame.content.FactionIcons or {}
     scrollFrame.content.RaceIcons = scrollFrame.content.RaceIcons or {}
     scrollFrame.content.ClassIcons = scrollFrame.content.ClassIcons or {}
@@ -63,8 +63,8 @@ function AltinatorOverviewFrame:Initialize(self)
     scrollFrame.content.MoneyTexts = scrollFrame.content.MoneyTexts or {}
     scrollFrame.content.LevelTexts = scrollFrame.content.LevelTexts or {}
     for i, name in ipairs(characters) do
-         local char = AltinatorDB.global.characters[name]
-         AltinatorNS:CreateCharacterName(scrollFrame.content, i, char, scrollFrame.content, _PADDING, _HEIGHT, _ICON_SIZE)
+         local char = AltwrightDB.global.characters[name]
+         AltwrightNS:CreateCharacterName(scrollFrame.content, i, char, scrollFrame.content, _PADDING, _HEIGHT, _ICON_SIZE)
 
          scrollFrame.content.GuildNames[i] = scrollFrame.content.GuildNames[i] or scrollFrame.content:CreateFontString(nil,"ARTWORK","GameFontHighlight")
          scrollFrame.content.GuildNames[i]:Show()
@@ -79,7 +79,7 @@ function AltinatorOverviewFrame:Initialize(self)
          scrollFrame.content.MoneyTexts[i] = scrollFrame.content.MoneyTexts[i] or scrollFrame.content:CreateFontString(nil,"ARTWORK","GameFontHighlight")
          scrollFrame.content.MoneyTexts[i]:Show()
          scrollFrame.content.MoneyTexts[i]:SetPoint("RIGHT", scrollFrame.content.FactionIcons[i], "LEFT", 495, 0)
-         scrollFrame.content.MoneyTexts[i]:SetText(AltinatorNS:MoneyToGoldString(char.Money))
+         scrollFrame.content.MoneyTexts[i]:SetText(AltwrightNS:MoneyToGoldString(char.Money))
          totalMoney = totalMoney + char.Money
 
          scrollFrame.content.LevelTexts[i] = scrollFrame.content.LevelTexts[i] or scrollFrame.content:CreateFontString(nil,"ARTWORK","GameFontHighlight")
@@ -192,7 +192,7 @@ function AltinatorOverviewFrame:Initialize(self)
     scrollFrame.content.TotalMoneyString = scrollFrame.content.TotalMoneyString or scrollFrame.content:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
     scrollFrame.content.TotalMoneyString:Show()
     scrollFrame.content.TotalMoneyString:SetPoint("RIGHT", scrollFrame.content.TotalName, "LEFT", 495, 0)
-    scrollFrame.content.TotalMoneyString:SetText(AltinatorNS:MoneyToGoldString(totalMoney))
+    scrollFrame.content.TotalMoneyString:SetText(AltwrightNS:MoneyToGoldString(totalMoney))
 
     scrollFrame.content:SetSize(C["Width"], _HEIGHT * (totalCharacters + 2))
 end

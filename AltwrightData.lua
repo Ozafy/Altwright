@@ -1,18 +1,18 @@
-local AddonName, AltinatorNS = ...
+local AddonName, AltwrightNS = ...
 
-local C = AltinatorNS.C
+local C = AltwrightNS.C
 local L = LibStub("AceLocale-3.0"):GetLocale(AddonName)
-local AltinatorData = {}
-AltinatorNS.AltinatorData = AltinatorData
+local AltwrightData = {}
+AltwrightNS.AltwrightData = AltwrightData
 
 local function AutoReturnMail(mailData)
    if mailData.Returned then
       return
    end
-   local data = AltinatorNS.AltinatorDB.global.characters[mailData.Sender]
+   local data = AltwrightNS.AltwrightDB.global.characters[mailData.Sender]
    if data then
       table.insert(data.Mail, {
-         Sender = AltinatorNS.AltinatorAddon.CurrentCharacter.FullName,
+         Sender = AltwrightNS.AltwrightAddon.CurrentCharacter.FullName,
          Subject = mailData.Subject,
          Body = mailData.Body,
          Time = time(),
@@ -35,11 +35,11 @@ local function FindInBagSlot(bags, itemId)
    end
    return false
 end
-function AltinatorData:SavePlayerDataLogin()
+function AltwrightData:SavePlayerDataLogin()
    local name, realm = UnitFullName("player")
-   local data = AltinatorNS:MergeObjects(AltinatorNS.AltinatorDB.global.characters[name .. "-" .. realm] or {}, AltinatorNS.AltinatorAddon.CurrentCharacter)
-   AltinatorNS.AltinatorDB.global.characters[name .. "-" .. realm] = data
-   AltinatorNS.AltinatorAddon.CurrentCharacter = data
+   local data = AltwrightNS:MergeObjects(AltwrightNS.AltwrightDB.global.characters[name .. "-" .. realm] or {}, AltwrightNS.AltwrightAddon.CurrentCharacter)
+   AltwrightNS.AltwrightDB.global.characters[name .. "-" .. realm] = data
+   AltwrightNS.AltwrightAddon.CurrentCharacter = data
    data.Name = name
    data.Realm = realm
    data.FullName= name .. "-" .. realm
@@ -47,8 +47,8 @@ function AltinatorData:SavePlayerDataLogin()
    data.Level = UnitLevel("player")
    data.Faction = UnitFactionGroup("player")
 
-   AltinatorData:SavePlayerItemLevel()
-   AltinatorData:SavePlayerHonour()
+   AltwrightData:SavePlayerItemLevel()
+   AltwrightData:SavePlayerHonour()
 
    data.Money = GetMoney()
    data.LastLogin = time()
@@ -79,11 +79,11 @@ function AltinatorData:SavePlayerDataLogin()
    data.XP.Needed=UnitXPMax("player")
    data.XP.Rested=GetXPExhaustion()
    data.Resting = IsResting()
-   AltinatorData:SavePlayerLocation()
+   AltwrightData:SavePlayerLocation()
 
-   AltinatorData:SavePlayerProfessions()
-   AltinatorData:SaveProfessionItemCooldowns()
-   AltinatorData:SavePlayerSpells()
+   AltwrightData:SavePlayerProfessions()
+   AltwrightData:SaveProfessionItemCooldowns()
+   AltwrightData:SavePlayerSpells()
 
    data.Mail = data.Mail or {}
    for i=#data.Mail,1,-1 do
@@ -93,20 +93,20 @@ function AltinatorData:SavePlayerDataLogin()
       end
    end
 
-   AltinatorData:SavePlayerBags()
-   AltinatorData:SavePlayerAttunements()
+   AltwrightData:SavePlayerBags()
+   AltwrightData:SavePlayerAttunements()
 end
 
-function AltinatorData:SavePlayerItemLevel()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerItemLevel()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    local overall, equipped = GetAverageItemLevel()
    data.ItemLevel = data.ItemLevel or {}
    data.ItemLevel.Overall = overall
    data.ItemLevel.Equipped = equipped
 end
 
-function AltinatorData:SavePlayerHonour()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerHonour()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    data.Rank = data.Rank or {}
    data.Rank.Value = UnitPVPRank("player")
    data.Rank.Name = GetPVPRankInfo(data.Rank.Value)
@@ -116,8 +116,8 @@ function AltinatorData:SavePlayerHonour()
    data.Honour.Points = points
 end
 
-function AltinatorData:SavePlayerBags()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerBags()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    data.Containers = data.Containers or {}
    data.Containers.Bags = data.Containers.Bags or {}
    data.Containers.Bank = data.Containers.Bank or {}
@@ -130,8 +130,8 @@ function AltinatorData:SavePlayerBags()
    end
 end
 
-function AltinatorData:SavePlayerAttunements()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerAttunements()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    local bagSlots = {}
    for bag=0, NUM_BAG_SLOTS do
       table.insert(bagSlots, bag)
@@ -166,8 +166,8 @@ function AltinatorData:SavePlayerAttunements()
    end
 end
 
-function AltinatorData:SavePlayerProfessions()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerProfessions()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    -- skill events can fire before login data is set up
    if not data.FullName then
       return
@@ -218,8 +218,8 @@ function AltinatorData:SavePlayerProfessions()
    end
 end
 
-function AltinatorData:ScanBank()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:ScanBank()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    local bankSlots = {
       BANK_CONTAINER,
    }
@@ -245,8 +245,8 @@ function AltinatorData:ScanBank()
       end
    end
 end
-function AltinatorData:ClearPlayerMailData()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:ClearPlayerMailData()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    data.Mail = data.Mail or {}
    for i=#data.Mail,1,-1 do
       if data.Mail[i].ArrivalTime < time() then
@@ -256,11 +256,11 @@ function AltinatorData:ClearPlayerMailData()
    data.Money = GetMoney() -- update money in case mail had money attached
 end
 
-function AltinatorData:SavePlayerDataLogout()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerDataLogout()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    data.LastLogout = time()
    -- IsResting() isn't reliable during logout, keep the last value seen while playing
-   AltinatorData:SavePlayerLocation()
+   AltwrightData:SavePlayerLocation()
    -- /played is only requested on load, add the time played since then
    if data.TimePlayed and data.TimePlayed.Received then
       local elapsed = time() - data.TimePlayed.Received
@@ -271,21 +271,21 @@ function AltinatorData:SavePlayerDataLogout()
 end
 
 
-function AltinatorData:SavePlayerTimePlayed(total, level)
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerTimePlayed(total, level)
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    data.TimePlayed = {}
    data.TimePlayed.Total = total
    data.TimePlayed.Level = level
    data.TimePlayed.Received = time()
 end
 
-function AltinatorData:SavePlayerMoney(total, level)
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerMoney(total, level)
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    data.Money = GetMoney()
 end
 
-function AltinatorData:SavePlayerXP(level)
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerXP(level)
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    -- UnitLevel still returns the old level during PLAYER_LEVEL_UP, so that event passes the new one
    data.Level = level or UnitLevel("player")
    data.XP=data.XP or{}
@@ -294,27 +294,27 @@ function AltinatorData:SavePlayerXP(level)
    data.XP.Rested=GetXPExhaustion()
 end
 
-function AltinatorData:SavePlayerResting()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerResting()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    data.Resting = IsResting()
 end
 
-function AltinatorData:SavePlayerLocation()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerLocation()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    data.Location = data.Location or {}
    data.Location.Zone = GetRealZoneText()
    data.Location.SubZone = GetSubZoneText()
 end
 
-function AltinatorData:SavePlayerGuild()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerGuild()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    local guildName, guildRankName, guildRankIndex, guildRealm = GetGuildInfo("player")
    data.Guild= data.Guild or {}
    data.Guild.Name=guildName
    data.Guild.Rank=guildRankName
 end
 
-function AltinatorData:GetCharacterProfession(char, profId)
+function AltwrightData:GetCharacterProfession(char, profId)
    return char.Professions[profId] or char.ProfessionsSecondairy[profId] or nil
 end
 
@@ -326,8 +326,8 @@ local function GetSpellBookName(index)
 end
 
 -- stores the highest known rank of every spell in the spellbook, used for the class book tooltips
-function AltinatorData:SavePlayerSpells()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SavePlayerSpells()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    local spells = {}
    for tab = 1, GetNumSpellTabs() do
       local _, _, offset, numSpells = GetSpellTabInfo(tab)
@@ -365,10 +365,10 @@ local function RomanToNumber(roman)
 end
 
 -- class books are named after the spell they teach, with the rank as a roman numeral (e.g. Tome of Fireball XII)
-function AltinatorData:ClassBookKnownOrLearnable(itemName, classNames)
+function AltwrightData:ClassBookKnownOrLearnable(itemName, classNames)
    local characters = {}
-   for _, name in ipairs(AltinatorNS:GetRealmCharactersSorted()) do
-      local char = AltinatorNS.AltinatorDB.global.characters[name]
+   for _, name in ipairs(AltwrightNS:GetRealmCharactersSorted()) do
+      local char = AltwrightNS.AltwrightDB.global.characters[name]
       if char and char.Class and tContains(classNames, char.Class.Name) then
          table.insert(characters, char)
       end
@@ -397,12 +397,12 @@ function AltinatorData:ClassBookKnownOrLearnable(itemName, classNames)
    return charactersThatKnow, charactersThatCouldLearn
 end
 
-function AltinatorData:CharacterProfessionRecipeKnownOrLearnable(profId, spellId, itemId)
-   local characters = AltinatorNS:GetRealmCharactersSorted()
+function AltwrightData:CharacterProfessionRecipeKnownOrLearnable(profId, spellId, itemId)
+   local characters = AltwrightNS:GetRealmCharactersSorted()
    local charactersThatKnow = {}
    local charactersThatCouldLearn = {}
    for i, name in ipairs(characters) do
-      local char = AltinatorNS.AltinatorDB.global.characters[name]
+      local char = AltwrightNS.AltwrightDB.global.characters[name]
       if char then
          local prof = self:GetCharacterProfession(char, profId)
          if prof then
@@ -424,7 +424,7 @@ function AltinatorData:CharacterProfessionRecipeKnownOrLearnable(profId, spellId
    return charactersThatKnow, charactersThatCouldLearn
 end
 
-function AltinatorData:ScanEnchantingRecipes()
+function AltwrightData:ScanEnchantingRecipes()
 	local tradeskillName = GetCraftDisplaySkillLine()
    local profNames_rev = tInvert(L["ProfessionIDs"])
    local profId = 0
@@ -435,7 +435,7 @@ function AltinatorData:ScanEnchantingRecipes()
          local skillName, _, skillType = GetCraftInfo(i)			-- Ex: Runed Copper Rod
          local _, _, icon, _, _, _, spellID = GetSpellInfo(skillName)		-- Gets : icon = 135225, spellID = 7421
          --print(format("name: %s, skillType: %s, spellID: %d, icon: %d", name or "nil", skillType or "nil", spellID or 0, icon or 0))
-         local prof = AltinatorNS.AltinatorData:GetCharacterProfession(AltinatorNS.AltinatorAddon.CurrentCharacter, profId)
+         local prof = AltwrightNS.AltwrightData:GetCharacterProfession(AltwrightNS.AltwrightAddon.CurrentCharacter, profId)
          if prof then
             prof.Spells = prof.Spells or {}
             prof.Spells[spellID] = {
@@ -449,7 +449,7 @@ function AltinatorData:ScanEnchantingRecipes()
    end
 end
 
-function AltinatorData:ScanTradeSkills()
+function AltwrightData:ScanTradeSkills()
    local tradeskillName = GetTradeSkillLine()
    local profNames_rev = tInvert(L["ProfessionIDs"])
    local profId = 0
@@ -475,7 +475,7 @@ function AltinatorData:ScanTradeSkills()
             itemID = tonumber(link:match("item:(%d+)"))
          end
          if itemID and skillType ~= "header" then
-            local prof = AltinatorNS.AltinatorData:GetCharacterProfession(AltinatorNS.AltinatorAddon.CurrentCharacter, profId)
+            local prof = AltwrightNS.AltwrightData:GetCharacterProfession(AltwrightNS.AltwrightAddon.CurrentCharacter, profId)
             if prof then
                prof.Items = prof.Items or {}
                prof.Items[itemID] = {
@@ -503,7 +503,7 @@ end
 hooksecurefunc("SendMail", function(recipient, subject, body, ...)
    local recipientName, recipientRealm = strsplit("-", recipient)
    recipientRealm = recipientRealm or GetNormalizedRealmName()
-   local data = AltinatorNS.AltinatorDB.global.characters[recipientName .. "-" .. recipientRealm]
+   local data = AltwrightNS.AltwrightDB.global.characters[recipientName .. "-" .. recipientRealm]
    if data then
       local attachments = HasAttachments()
       local moneySent = GetSendMailMoney()
@@ -513,7 +513,7 @@ hooksecurefunc("SendMail", function(recipient, subject, body, ...)
       end
       data.Mail = data.Mail or {}
       table.insert(data.Mail, {
-         Sender = AltinatorNS.AltinatorAddon.CurrentCharacter.FullName,
+         Sender = AltwrightNS.AltwrightAddon.CurrentCharacter.FullName,
          Subject = subject,
          Body = body or "",
          Time = time(),
@@ -530,11 +530,11 @@ hooksecurefunc("ReturnInboxItem", function(index, ...)
 	local _, stationaryIcon, mailSender, mailSubject, moneySent, _, _, numAttachments = GetInboxHeaderInfo(index)
    local recipientName, recipientRealm = strsplit("-", mailSender)
    recipientRealm = recipientRealm or GetNormalizedRealmName()
-   local data = AltinatorNS.AltinatorDB.global.characters[recipientName .. "-" .. recipientRealm]
+   local data = AltwrightNS.AltwrightDB.global.characters[recipientName .. "-" .. recipientRealm]
    if data then
       data.Mail = data.Mail or {}
       table.insert(data.Mail, {
-         Sender = AltinatorNS.AltinatorAddon.CurrentCharacter.FullName,
+         Sender = AltwrightNS.AltwrightAddon.CurrentCharacter.FullName,
          Subject = mailSubject,
          Body = "",
          Time = time(),
@@ -551,10 +551,10 @@ local GetItemCount = C_Item.GetItemCount or GetItemCount
 local GetItemCooldown = C_Container.GetItemCooldown or GetItemCooldown
 local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
 
-function AltinatorData:SaveProfessionItemCooldowns()
-   local data = AltinatorNS.AltinatorAddon.CurrentCharacter
+function AltwrightData:SaveProfessionItemCooldowns()
+   local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    for profId, items in pairs(C["ProfessionCooldownItems"]) do
-      local prof = AltinatorData:GetCharacterProfession(data, profId)
+      local prof = AltwrightData:GetCharacterProfession(data, profId)
       if prof then
          prof.ItemCooldowns = prof.ItemCooldowns or {}
          for _, itemId in ipairs(items) do
@@ -596,8 +596,8 @@ end
 
 -- calls func(char, itemData) for every profession cooldown that has expired but hasn't been used again yet
 local function ForEachReadyCooldown(func, includeHidden)
-   for _, name in ipairs(AltinatorNS:GetRealmCharactersSorted(includeHidden)) do
-      local char = AltinatorNS.AltinatorDB.global.characters[name]
+   for _, name in ipairs(AltwrightNS:GetRealmCharactersSorted(includeHidden)) do
+      local char = AltwrightNS.AltwrightDB.global.characters[name]
       for _, professions in ipairs({ char.Professions or {}, char.ProfessionsSecondairy or {} }) do
          for _, profession in pairs(professions) do
             for _, items in ipairs({ profession.Items or {}, profession.ItemCooldowns or {} }) do
@@ -613,7 +613,7 @@ local function ForEachReadyCooldown(func, includeHidden)
    end
 end
 
-function AltinatorData:GetReadyCooldowns()
+function AltwrightData:GetReadyCooldowns()
    local ready = {}
    ForEachReadyCooldown(function(char, itemData)
       table.insert(ready, { Char = char, Name = itemData.Name })
@@ -647,8 +647,8 @@ end
 -- returns the number of warnings
 local function NotifyExpiringMail()
    local count = 0
-   for _, name in ipairs(AltinatorNS:GetRealmCharactersSorted(true)) do
-      local char = AltinatorNS.AltinatorDB.global.characters[name]
+   for _, name in ipairs(AltwrightNS:GetRealmCharactersSorted(true)) do
+      local char = AltwrightNS.AltwrightDB.global.characters[name]
       for _, mail in ipairs(char.Mail or {}) do
          local timeLeft = mail.ExpiryTime - time()
          local threshold
@@ -659,9 +659,9 @@ local function NotifyExpiringMail()
          end
          -- mail past its expiry time is already gone in game, it gets cleaned up when its recipient logs in
          if timeLeft > 0 and threshold and (threshold <= C["MailExpiryWarningEveryLoginDays"] or (mail.ExpiryWarned or math.huge) > threshold) then
-            local sender = AltinatorNS.AltinatorDB.global.characters[mail.Sender]
+            local sender = AltwrightNS.AltwrightDB.global.characters[mail.Sender]
             local senderName = sender and ColoredCharacterName(sender) or mail.Sender
-            local expiresIn = strtrim(AltinatorNS:LongTimeSpanToString(timeLeft))
+            local expiresIn = strtrim(AltwrightNS:LongTimeSpanToString(timeLeft))
             PrintNotification(string.format(mail.Returned and L["MailExpiringReturned"] or L["MailExpiring"], ColoredCharacterName(char), senderName, expiresIn))
             mail.ExpiryWarned = threshold
             count = count + 1
@@ -675,10 +675,10 @@ local function ShowLoginAlert(message)
    RaidNotice_AddMessage(RaidWarningFrame, AddonName .. ": " .. message, { r = 1, g = 0.82, b = 0 }, 8)
 end
 
-function AltinatorData:NotifyOnLogin()
+function AltwrightData:NotifyOnLogin()
    local cooldownCount = NotifyExpiredCooldowns()
    local mailCount = NotifyExpiringMail()
-   if AltinatorNS.AltinatorDB.profile.settings.hideLoginAlert or (cooldownCount == 0 and mailCount == 0) then
+   if AltwrightNS.AltwrightDB.profile.settings.hideLoginAlert or (cooldownCount == 0 and mailCount == 0) then
       return
    end
    if cooldownCount > 0 then
@@ -690,7 +690,7 @@ function AltinatorData:NotifyOnLogin()
    PlaySound(SOUNDKIT.MAP_PING)
 end
 
-function AltinatorData:GetProfessionCooldowns(profession)
+function AltwrightData:GetProfessionCooldowns(profession)
    local cooldowns = {}
    AddActiveCooldowns(cooldowns, profession.Items)
    AddActiveCooldowns(cooldowns, profession.ItemCooldowns)
@@ -718,7 +718,7 @@ local function GetPlayerWorldBuffs()
    tempWorldBuffs = worldbuffs
 end
 
-function AltinatorData:SpellCastStart(unit, spellId)
+function AltwrightData:SpellCastStart(unit, spellId)
    if unit=="player" and spellId == 349858 then
       GetPlayerWorldBuffs()
       storeBuffTimer = C_Timer.NewTicker(1, function()
@@ -727,7 +727,7 @@ function AltinatorData:SpellCastStart(unit, spellId)
    end
 end
 
-function AltinatorData:SpellCastStop(unit, spellId)
+function AltwrightData:SpellCastStop(unit, spellId)
    if unit=="player" and spellId == 349858 then
       tempWorldBuffs = {}
       if storeBuffTimer then  
@@ -737,13 +737,13 @@ function AltinatorData:SpellCastStop(unit, spellId)
    end
 end
 
-function AltinatorData:SpellCastSucceeded(unit, spellId)
+function AltwrightData:SpellCastSucceeded(unit, spellId)
    if unit=="player" then
       if spellId == 349858 then
-         AltinatorNS.AltinatorAddon.CurrentCharacter.WorldBuffs = tempWorldBuffs
+         AltwrightNS.AltwrightAddon.CurrentCharacter.WorldBuffs = tempWorldBuffs
       end
       if spellId == 349863 then
-         AltinatorNS.AltinatorAddon.CurrentCharacter.WorldBuffs = {}
+         AltwrightNS.AltwrightAddon.CurrentCharacter.WorldBuffs = {}
       end
    end
 end

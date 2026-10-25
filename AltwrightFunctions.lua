@@ -1,13 +1,13 @@
-local AddonName, AltinatorNS = ...
+local AddonName, AltwrightNS = ...
 
-local C = AltinatorNS.C
+local C = AltwrightNS.C
 local L = LibStub("AceLocale-3.0"):GetLocale(AddonName)
 
-function AltinatorNS:GetRealmCharactersSorted(includeHidden)
+function AltwrightNS:GetRealmCharactersSorted(includeHidden)
    local characterNames = {}
    local realm = GetNormalizedRealmName()
-   for key, char in pairs(self.AltinatorDB.global.characters) do
-      if char.Realm == realm and (includeHidden or not self.AltinatorDB.global.hiddenCharacters[key]) then
+   for key, char in pairs(self.AltwrightDB.global.characters) do
+      if char.Realm == realm and (includeHidden or not self.AltwrightDB.global.hiddenCharacters[key]) then
          table.insert(characterNames, key)
       end
    end
@@ -15,7 +15,7 @@ function AltinatorNS:GetRealmCharactersSorted(includeHidden)
    return characterNames
 end
 
-function AltinatorNS:GetCharacterIcons(char)
+function AltwrightNS:GetCharacterIcons(char)
    local faction = "h"
    local factionIcon = "inv_bannerpvp_01"
    local showRank = false
@@ -33,7 +33,7 @@ function AltinatorNS:GetCharacterIcons(char)
    return factionIcon, raceIcon, classIcon, showRank
 end
 
-function AltinatorNS:MoneyToGoldString(money)
+function AltwrightNS:MoneyToGoldString(money)
 	local copper = (("%02d"):format(money % 100))
 	local silver = (("%02d"):format((money / 100) % 100))
 	local gold = (("%02d"):format(money / 100 / 100))
@@ -43,7 +43,7 @@ function AltinatorNS:MoneyToGoldString(money)
 	return (gold..gcoin..silver..scoin..copper..ccoin)
 end
 
-function AltinatorNS:SplitString(str, delim, maxNb)
+function AltwrightNS:SplitString(str, delim, maxNb)
    if string.find(str, delim) == nil then
       return { str }
    end
@@ -69,7 +69,7 @@ function AltinatorNS:SplitString(str, delim, maxNb)
    return result
 end
 
-function AltinatorNS:MergeObjects(mergeInto, mergeFrom)
+function AltwrightNS:MergeObjects(mergeInto, mergeFrom)
     for k, v in pairs(mergeFrom) do
         if (type(v) == "table") and (type(mergeInto[k] or false) == "table") then
             self:MergeObjects(mergeInto[k], mergeFrom[k])
@@ -80,7 +80,7 @@ function AltinatorNS:MergeObjects(mergeInto, mergeFrom)
     return mergeInto
 end
 
-function AltinatorNS:ShortTimeSpanToString(span)
+function AltwrightNS:ShortTimeSpanToString(span)
    local days = math.floor(span / 86400)
    span = span - (days * 86400)
    local hours = math.floor(span / 3600)
@@ -120,7 +120,7 @@ function AltinatorNS:ShortTimeSpanToString(span)
    return ""
 end
 
-function AltinatorNS:LongTimeSpanToString(span)
+function AltwrightNS:LongTimeSpanToString(span)
    local days = math.floor(span / 86400)
    span = span - (days * 86400)
    local hours = math.floor(span / 3600)
@@ -142,7 +142,7 @@ function AltinatorNS:LongTimeSpanToString(span)
    return timeString
 end
 
-function AltinatorNS:GetLastReset()
+function AltwrightNS:GetLastReset()
    local reset = C["ResetTimes"][GetCurrentRegion()]
    local weekday = C_DateAndTime.GetCurrentCalendarTime().weekday
    local today = time()
@@ -160,7 +160,7 @@ function AltinatorNS:GetLastReset()
    return lastReset
 end
 
-function AltinatorNS:CreateInnerBorder(frame, itemQuality)
+function AltwrightNS:CreateInnerBorder(frame, itemQuality)
    local iborder = frame.iborder or CreateFrame("Frame", nil, frame, "BackdropTemplate")
    frame.iborder = iborder
    frame.iborder:SetPoint("TOPLEFT", 1, -1)
@@ -179,19 +179,19 @@ function AltinatorNS:CreateInnerBorder(frame, itemQuality)
 	return frame.iborder
 end
 
-function AltinatorNS:CreateCharacterName(contentFrame, charIndex, char, anchor, OffsetX, baseOffsetY, iconSize)
+function AltwrightNS:CreateCharacterName(contentFrame, charIndex, char, anchor, OffsetX, baseOffsetY, iconSize)
    contentFrame.FactionIcons[charIndex] = contentFrame.FactionIcons[charIndex] or contentFrame:CreateTexture("Faction_Icon_" .. charIndex, "BACKGROUND")
    contentFrame.FactionIcons[charIndex]:Show()
    contentFrame.FactionIcons[charIndex]:SetSize(iconSize, iconSize)
    contentFrame.FactionIcons[charIndex]:SetPoint("TOPLEFT", anchor, "TOPLEFT", OffsetX, baseOffsetY * -1 * (charIndex-1))
-   local factionIcon, raceIcon, classIcon, showRank = AltinatorNS:GetCharacterIcons(char)
+   local factionIcon, raceIcon, classIcon, showRank = AltwrightNS:GetCharacterIcons(char)
    if showRank then
       contentFrame.FactionIcons[charIndex]:SetScript("OnEnter", function(self)
-         AltinatorNS.AltinatorTooltip:SetOwner(contentFrame, "ANCHOR_CURSOR")
-         AltinatorNS.AltinatorTooltip:SetText(char.Rank.Name)
+         AltwrightNS.AltwrightTooltip:SetOwner(contentFrame, "ANCHOR_CURSOR")
+         AltwrightNS.AltwrightTooltip:SetText(char.Rank.Name)
       end)
       contentFrame.FactionIcons[charIndex]:SetScript("OnLeave", function(self)
-         AltinatorNS.AltinatorTooltip:Hide()
+         AltwrightNS.AltwrightTooltip:Hide()
       end)
    else
       contentFrame.FactionIcons[charIndex]:SetScript("OnEnter", nil)
@@ -232,7 +232,7 @@ local function HidePooledWidgets(pool)
 end
 
 -- hide all reused row widgets before a redraw, so rows of characters that are no longer listed don't linger
-function AltinatorNS:HideRowWidgets(contentFrame)
+function AltwrightNS:HideRowWidgets(contentFrame)
    for key, value in pairs(contentFrame) do
       if type(value) == "table" then
          if not value.GetObjectType then
@@ -244,7 +244,7 @@ function AltinatorNS:HideRowWidgets(contentFrame)
    end
 end
 
-function AltinatorNS:CreateScrollFrame(parent, topX, topY, bottomX, bottomY)
+function AltwrightNS:CreateScrollFrame(parent, topX, topY, bottomX, bottomY)
 
    if not topX then topX = 0 end
    if not topY then topY = -32 end
@@ -255,7 +255,7 @@ function AltinatorNS:CreateScrollFrame(parent, topX, topY, bottomX, bottomY)
    parent.ScrollFrame:SetPoint("TOPLEFT", parent, "TOPLEFT", topX, topY)
    parent.ScrollFrame:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", bottomX, bottomY)
    parent.ScrollFrame:SetScript("OnMouseWheel", function(self, delta)
-      AltinatorNS:ScrollFrame_OnMouseWheel(self, delta)
+      AltwrightNS:ScrollFrame_OnMouseWheel(self, delta)
    end)
    parent.ScrollFrame:EnableMouse(true)
 
@@ -267,7 +267,7 @@ function AltinatorNS:CreateScrollFrame(parent, topX, topY, bottomX, bottomY)
    return parent.ScrollFrame
 end
 
-function AltinatorNS:ScrollFrame_OnMouseWheel(self, delta)
+function AltwrightNS:ScrollFrame_OnMouseWheel(self, delta)
    local newValue = self:GetVerticalScroll() - (delta * 20)
    if (newValue < 0) then
       newValue = 0
@@ -277,7 +277,7 @@ function AltinatorNS:ScrollFrame_OnMouseWheel(self, delta)
    self:SetVerticalScroll(newValue)
 end
 
-function AltinatorNS:ItemOnClick(item)
+function AltwrightNS:ItemOnClick(item)
    if IsShiftKeyDown() and ChatFrame1EditBox and ChatFrame1EditBox:IsVisible() then
       ChatFrame1EditBox:Insert(item.TooltipItemLink)
    end
@@ -286,14 +286,14 @@ function AltinatorNS:ItemOnClick(item)
    end
 end
 
-function AltinatorNS:ItemOnEnter(item)
-   AltinatorNS.AltinatorTooltip:SetOwner(item, "ANCHOR_BOTTOMRIGHT")
-   AltinatorNS.AltinatorTooltip:SetHyperlink(item.TooltipItemLink)
+function AltwrightNS:ItemOnEnter(item)
+   AltwrightNS.AltwrightTooltip:SetOwner(item, "ANCHOR_BOTTOMRIGHT")
+   AltwrightNS.AltwrightTooltip:SetHyperlink(item.TooltipItemLink)
    if IsShiftKeyDown() then
-      GameTooltip_ShowCompareItem(AltinatorNS.AltinatorTooltip)
+      GameTooltip_ShowCompareItem(AltwrightNS.AltwrightTooltip)
    end
 end
 
-function AltinatorNS:ItemOnLeave(item)
-   AltinatorNS.AltinatorTooltip:Hide()
+function AltwrightNS:ItemOnLeave(item)
+   AltwrightNS.AltwrightTooltip:Hide()
 end

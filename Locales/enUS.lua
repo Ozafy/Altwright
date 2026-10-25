@@ -1,4 +1,4 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("Altinator", "enUS", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("Altwright", "enUS", true)
 
 L["Overview"] = "Overview"
 L["Activity"] = "Activity"
@@ -118,6 +118,7 @@ L["AttunementDungeons"] = {
     [13] = "Blackwing Lair",
     [14] = "Naxxramas",
 }
+L["ImportedAltinatorSettings"] = "Altinator is now called Altwright, your settings and character data were copied over"
 L["OptionsSettingsHeader"] = "Settings"
 L["OptionMinimap"] = "Hide minimap icon"
 L["OptionTooltip"] = "Hide info in recipe tooltips"
@@ -129,7 +130,7 @@ L["OptionSelectCharacter"] = "Select character"
 L["OptionSelectCharacterToDelete"] = "Select character to delete"
 L["OptionDeleteSelected"] = "Delete selected character"
 L["OptionDelete"] = "Delete character"
-L["OptionDeleteTooltip"] = "Delete the character selected in the dropdown above from Altinator's database."
+L["OptionDeleteTooltip"] = "Delete the character selected in the dropdown above from Altwright's database."
 L["OptionHideCharacter"] = "Hide characters"
 L["OptionHideCharacterTooltipText"] = "Hide characters from the character list"
 L["BoonedBuffs"] = "Booned Buffs"

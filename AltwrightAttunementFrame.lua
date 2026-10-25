@@ -1,12 +1,12 @@
-local AddonName, AltinatorNS = ...
+local AddonName, AltwrightNS = ...
 
-local C = AltinatorNS.C
+local C = AltwrightNS.C
 local L = LibStub("AceLocale-3.0"):GetLocale(AddonName)
 
-local AltinatorAttunementFrame = {}
-AltinatorNS.AltinatorAttunementFrame = AltinatorAttunementFrame
+local AltwrightAttunementFrame = {}
+AltwrightNS.AltwrightAttunementFrame = AltwrightAttunementFrame
 
-function AltinatorAttunementFrame:Initialize(self)
+function AltwrightAttunementFrame:Initialize(self)
     local _PADDING = 5
     local _WIDTH = C["Width"]-50
     local _HEIGHT = 40
@@ -22,7 +22,7 @@ function AltinatorAttunementFrame:Initialize(self)
         self.Frames["EmptyTextureFrame" .. i] = self.Frames["EmptyTextureFrame" .. i] or CreateFrame("Frame", nil, self)
         self.Frames["EmptyTextureFrame" .. i]:SetSize(_ICON_SIZE, _ICON_SIZE)
         self.Frames["EmptyTextureFrame" .. i]:SetPoint("LEFT", self.Header, "LEFT", ((i+1)*(_ICON_SIZE+_ICON_PADDING))+96, 0)
-        AltinatorNS:CreateInnerBorder(self.Frames["EmptyTextureFrame" .. i], 6)
+        AltwrightNS:CreateInnerBorder(self.Frames["EmptyTextureFrame" .. i], 6)
 
         self.Frames["EmptyTextureFrame" .. i].EmptyTexture = self.Frames["EmptyTextureFrame" .. i].EmptyTexture or self.Frames["EmptyTextureFrame" .. i]:CreateTexture(nil, "BACKGROUND")
         self.Frames["EmptyTextureFrame" .. i].EmptyTexture:SetSize(_ICON_SIZE, _ICON_SIZE)
@@ -31,24 +31,24 @@ function AltinatorAttunementFrame:Initialize(self)
 
         self.Frames["EmptyTextureFrame" .. i].TooltipText = L["AttunementDungeons"][i]
         self.Frames["EmptyTextureFrame" .. i]:SetScript("OnEnter", function(self)
-            AltinatorNS.AltinatorTooltip:SetOwner(self, "ANCHOR_CURSOR")
-            AltinatorNS.AltinatorTooltip:SetText(self.TooltipText)
+            AltwrightNS.AltwrightTooltip:SetOwner(self, "ANCHOR_CURSOR")
+            AltwrightNS.AltwrightTooltip:SetText(self.TooltipText)
         end)
         self.Frames["EmptyTextureFrame" .. i]:SetScript("OnLeave", function(self)
-            AltinatorNS.AltinatorTooltip:Hide()
+            AltwrightNS.AltwrightTooltip:Hide()
         end)
     end
 
-    local scrollFrame = self.ScrollFrame or AltinatorNS:CreateScrollFrame(self, nil, (_ICON_SIZE * -1)-_ICON_PADDING)
-    AltinatorNS:HideRowWidgets(scrollFrame.content)
+    local scrollFrame = self.ScrollFrame or AltwrightNS:CreateScrollFrame(self, nil, (_ICON_SIZE * -1)-_ICON_PADDING)
+    AltwrightNS:HideRowWidgets(scrollFrame.content)
 
     local totalCharacters = 0
-    local characters = AltinatorNS:GetRealmCharactersSorted()
+    local characters = AltwrightNS:GetRealmCharactersSorted()
     scrollFrame.content.ClassFrames = scrollFrame.content.ClassFrames or {}
     scrollFrame.content.CharNames = scrollFrame.content.CharNames or {}
 
     for i, name in ipairs(characters) do
-        local char = AltinatorDB.global.characters[name]
+        local char = AltwrightDB.global.characters[name]
 
         scrollFrame.content.ClassFrames[i] = scrollFrame.content.ClassFrames[i] or scrollFrame.content:CreateTexture(nil, "BACKGROUND")
         scrollFrame.content.ClassFrames[i]:Show()
@@ -76,18 +76,18 @@ function AltinatorAttunementFrame:Initialize(self)
 
             scrollFrame.content["item" .. i .. "i" .. j].TooltipText = L["AttunementDungeons"][j]
             scrollFrame.content["item" .. i .. "i" .. j]:SetScript("OnEnter", function(self)
-                AltinatorNS.AltinatorTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                AltinatorNS.AltinatorTooltip:SetText(self.TooltipText)
+                AltwrightNS.AltwrightTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                AltwrightNS.AltwrightTooltip:SetText(self.TooltipText)
             end)
             scrollFrame.content["item" .. i .. "i" .. j]:SetScript("OnLeave", function(self)
-                AltinatorNS.AltinatorTooltip:Hide()
+                AltwrightNS.AltwrightTooltip:Hide()
             end)
 
             if char.Attunements and char.Attunements[j] and char.Attunements[j].Completed then
-                AltinatorNS:CreateInnerBorder(scrollFrame.content["item" .. i .. "i" .. j], 2)
+                AltwrightNS:CreateInnerBorder(scrollFrame.content["item" .. i .. "i" .. j], 2)
                 scrollFrame.content["item" .. i .. "i" .. j].Texture:SetAlpha(1)
             else
-                AltinatorNS:CreateInnerBorder(scrollFrame.content["item" .. i .. "i" .. j], -1)
+                AltwrightNS:CreateInnerBorder(scrollFrame.content["item" .. i .. "i" .. j], -1)
                 scrollFrame.content["item" .. i .. "i" .. j].Texture:SetAlpha(0.5)
             end
         end

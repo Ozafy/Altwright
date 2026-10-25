@@ -1,4 +1,4 @@
-local AddonName, AltinatorNS = ...
+local AddonName, AltwrightNS = ...
 
 local L = LibStub("AceLocale-3.0"):GetLocale(AddonName)
 
@@ -8,7 +8,7 @@ local C = setmetatable({ }, {__index = function(t, k)
 	return v
 end})
 
-AltinatorNS.C = C
+AltwrightNS.C = C
 
 
 C["MajorDBVersion"] = 1

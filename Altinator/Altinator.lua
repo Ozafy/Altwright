@@ -1,0 +1,2 @@
+-- Altinator was renamed to Altwright.
+-- This addon only exists so the game still loads the old AltinatorDB saved variables, Altwright copies them on first load.
