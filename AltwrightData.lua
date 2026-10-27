@@ -253,12 +253,13 @@ function AltwrightData:ClearPlayerMailData()
          table.remove(data.Mail, i)
       end
    end
-   data.Money = GetMoney() -- update money in case mail had money attached
 end
 
 function AltwrightData:SavePlayerDataLogout()
    local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    data.LastLogout = time()
+   -- so a wrong value read during play doesn't end up in the saved variables
+   data.Money = GetMoney()
    -- IsResting() isn't reliable during logout, keep the last value seen while playing
    AltwrightData:SavePlayerLocation()
    -- /played is only requested on load, add the time played since then

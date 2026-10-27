@@ -170,6 +170,8 @@ end
 function AltwrightAddon:PLAYER_INTERACTION_MANAGER_FRAME_HIDE(self, type)
    if(type == 17) then
       AltwrightNS.AltwrightData:ClearPlayerMailData()
+      -- update money in case mail had money attached
+      ScheduleOnce("money", AltwrightNS.AltwrightData.SavePlayerMoney, 1)
    end
 end
 
@@ -177,8 +179,9 @@ function AltwrightAddon:TIME_PLAYED_MSG(self, total, level)
 	AltwrightNS.AltwrightData:SavePlayerTimePlayed(total, level)
 end
 
+-- GetMoney() can briefly return 0 around auction house and mail changes, read it once things settle
 function AltwrightAddon:PLAYER_MONEY()
-   AltwrightNS.AltwrightData:SavePlayerMoney()
+   ScheduleOnce("money", AltwrightNS.AltwrightData.SavePlayerMoney, 1)
 end
 
 function AltwrightAddon:PLAYER_LEVEL_UP(event, level)
