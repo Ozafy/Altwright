@@ -76,10 +76,12 @@ function AltwrightActivityFrame:Initialize(self)
             local charMailsInTransit = {}
             local charMailsExpiring = {}
             local charMailsColor = "GREEN_FONT_COLOR"
+            local earliestExpiry
             char.Mail = char.Mail or {}
             for i=#char.Mail,1,-1 do
                 if char.Mail[i].ArrivalTime < time() then
                     charMails = charMails + 1
+                    earliestExpiry = math.min(earliestExpiry or math.huge, char.Mail[i].ExpiryTime)
                     local timeLeft = char.Mail[i].ExpiryTime - time()
                     local expiryLevel = timeLeft > 0 and AltwrightNS.AltwrightData:GetMailExpiryLevel(timeLeft)
                     if expiryLevel then
@@ -98,10 +100,16 @@ function AltwrightActivityFrame:Initialize(self)
             totalMail = totalMail + charMails + #charMailsInTransit
             if charMails>0 or #charMailsInTransit>0 then
                 scrollFrame.content.MailTexts[i]:SetText("\124cn" .. charMailsColor .. ":" .. charMails .. "\124r (\124cnYELLOW_FONT_COLOR:" .. #charMailsInTransit .. "\124r)")
-                if #charMailsInTransit>0 or #charMailsExpiring>0 then
+                if #charMailsInTransit>0 or earliestExpiry then
                     scrollFrame.content.MailTexts[i]:SetScript("OnEnter", function(self)
                         AltwrightNS.AltwrightTooltip:SetOwner(self, "ANCHOR_CURSOR")
                         AltwrightNS.AltwrightTooltip:SetText(L["Mail"])
+                        if earliestExpiry and earliestExpiry > time() then
+                            local timeLeft = earliestExpiry - time()
+                            local expiryLevel = AltwrightNS.AltwrightData:GetMailExpiryLevel(timeLeft)
+                            local color = (expiryLevel == "urgent" and RED_FONT_COLOR) or (expiryLevel == "warning" and YELLOW_FONT_COLOR) or HIGHLIGHT_FONT_COLOR
+                            AltwrightNS.AltwrightTooltip:AddLine(L["MailEarliestExpiry"] .. " " .. AltwrightNS:LongTimeSpanToString(timeLeft), color.r, color.g, color.b)
+                        end
                         if #charMailsExpiring>0 then
                             AltwrightNS.AltwrightTooltip:AddLine(L["MailExpiringSoon"])
                             for _, mail in ipairs(charMailsExpiring) do
