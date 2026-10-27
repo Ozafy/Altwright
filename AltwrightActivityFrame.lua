@@ -74,25 +74,50 @@ function AltwrightActivityFrame:Initialize(self)
             scrollFrame.content.MailTexts[i]:SetPoint("LEFT", scrollFrame.content.FactionIcons[i], "LEFT", 165, 0)
             local charMails = 0
             local charMailsInTransit = {}
+            local charMailsExpiring = {}
+            local charMailsColor = "GREEN_FONT_COLOR"
             char.Mail = char.Mail or {}
             for i=#char.Mail,1,-1 do
                 if char.Mail[i].ArrivalTime < time() then
                     charMails = charMails + 1
+                    local timeLeft = char.Mail[i].ExpiryTime - time()
+                    local expiryLevel = timeLeft > 0 and AltwrightNS.AltwrightData:GetMailExpiryLevel(timeLeft)
+                    if expiryLevel then
+                        table.insert(charMailsExpiring, { ExpiryTime = char.Mail[i].ExpiryTime, Level = expiryLevel })
+                        if expiryLevel == "urgent" then
+                            charMailsColor = "RED_FONT_COLOR"
+                        elseif charMailsColor ~= "RED_FONT_COLOR" then
+                            charMailsColor = "YELLOW_FONT_COLOR"
+                        end
+                    end
                 else
                     table.insert(charMailsInTransit, char.Mail[i].ArrivalTime)
                 end
             end
+            table.sort(charMailsExpiring, function(a, b) return a.ExpiryTime < b.ExpiryTime end)
             totalMail = totalMail + charMails + #charMailsInTransit
             if charMails>0 or #charMailsInTransit>0 then
-                scrollFrame.content.MailTexts[i]:SetText("\124cnGREEN_FONT_COLOR:" .. charMails .. "\124r (\124cnYELLOW_FONT_COLOR:" .. #charMailsInTransit .. "\124r)")
-                if #charMailsInTransit>0 then
+                scrollFrame.content.MailTexts[i]:SetText("\124cn" .. charMailsColor .. ":" .. charMails .. "\124r (\124cnYELLOW_FONT_COLOR:" .. #charMailsInTransit .. "\124r)")
+                if #charMailsInTransit>0 or #charMailsExpiring>0 then
                     scrollFrame.content.MailTexts[i]:SetScript("OnEnter", function(self)
                         AltwrightNS.AltwrightTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                        AltwrightNS.AltwrightTooltip:SetText(L["MailInTransit"])
-                        for _, arrivalTime in ipairs(charMailsInTransit) do
-                            -- mail may have arrived since the frame was drawn, a negative span would show as ~24h
-                            if arrivalTime > time() then
-                                AltwrightNS.AltwrightTooltip:AddLine(L["MailInTransit_ArrivesIn"] .. " " .. AltwrightNS:LongTimeSpanToString(arrivalTime - time()), 1, 1, 1)
+                        AltwrightNS.AltwrightTooltip:SetText(L["Mail"])
+                        if #charMailsExpiring>0 then
+                            AltwrightNS.AltwrightTooltip:AddLine(L["MailExpiringSoon"])
+                            for _, mail in ipairs(charMailsExpiring) do
+                                if mail.ExpiryTime > time() then
+                                    local color = mail.Level == "urgent" and RED_FONT_COLOR or YELLOW_FONT_COLOR
+                                    AltwrightNS.AltwrightTooltip:AddLine(L["MailExpiresIn"] .. " " .. AltwrightNS:LongTimeSpanToString(mail.ExpiryTime - time()), color.r, color.g, color.b)
+                                end
+                            end
+                        end
+                        if #charMailsInTransit>0 then
+                            AltwrightNS.AltwrightTooltip:AddLine(L["MailInTransit"])
+                            for _, arrivalTime in ipairs(charMailsInTransit) do
+                                -- mail may have arrived since the frame was drawn, a negative span would show as ~24h
+                                if arrivalTime > time() then
+                                    AltwrightNS.AltwrightTooltip:AddLine(L["MailInTransit_ArrivesIn"] .. " " .. AltwrightNS:LongTimeSpanToString(arrivalTime - time()), 1, 1, 1)
+                                end
                             end
                         end
                         AltwrightNS.AltwrightTooltip:Show()

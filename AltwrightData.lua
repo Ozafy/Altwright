@@ -568,7 +568,6 @@ function AltwrightData:SaveProfessionItemCooldowns()
                if start and start > 0 and duration > 1.5 then
                   cooldown.Cooldown = duration
                   cooldown.CooldownEndTime = time() + (start + duration - GetTime())
-                  cooldown.ExpiredNotified = nil
                elseif cooldown.CooldownEndTime and cooldown.CooldownEndTime > time() then
                   -- only clear a cooldown that ended early, an expired one is kept for the login warning
                   cooldown.Cooldown = 0
@@ -631,40 +630,38 @@ local function PrintNotification(message)
    print("\124cffff8000" .. AddonName .. ":\124r " .. message)
 end
 
--- warns once about every profession cooldown that expired since the last warning, returns the number of warnings
+-- warns about every profession cooldown that is ready, on every login, returns the number of warnings
 local function NotifyExpiredCooldowns()
    local count = 0
    ForEachReadyCooldown(function(char, itemData)
-      if not itemData.ExpiredNotified then
-         PrintNotification(string.format(L["ProfessionCooldownExpired"], ColoredCharacterName(char), "\124cnYELLOW_FONT_COLOR:" .. (itemData.Name or "?") .. "\124r"))
-         itemData.ExpiredNotified = true
-         count = count + 1
-      end
+      PrintNotification(string.format(L["ProfessionCooldownExpired"], ColoredCharacterName(char), "\124cnYELLOW_FONT_COLOR:" .. (itemData.Name or "?") .. "\124r"))
+      count = count + 1
    end, true) -- hidden characters are only hidden from the lists, their cooldowns still matter
    return count
 end
 
--- warns about alt mail that is about to expire: once at 10 days, once at 5 days and on every login from 3 days on
--- returns the number of warnings
+-- "urgent" within the red threshold, "warning" within the yellow one, nil when the mail isn't expiring soon
+function AltwrightData:GetMailExpiryLevel(timeLeft)
+   if timeLeft <= C["MailExpiryUrgentDays"] * 86400 then
+      return "urgent"
+   elseif timeLeft <= C["MailExpiryWarningDays"] * 86400 then
+      return "warning"
+   end
+end
+
+-- warns about alt mail that is about to expire, on every login, returns the number of warnings
 local function NotifyExpiringMail()
    local count = 0
    for _, name in ipairs(AltwrightNS:GetRealmCharactersSorted(true)) do
       local char = AltwrightNS.AltwrightDB.global.characters[name]
       for _, mail in ipairs(char.Mail or {}) do
          local timeLeft = mail.ExpiryTime - time()
-         local threshold
-         for _, days in ipairs(C["MailExpiryWarningDays"]) do
-            if timeLeft <= days * 86400 then
-               threshold = days
-            end
-         end
          -- mail past its expiry time is already gone in game, it gets cleaned up when its recipient logs in
-         if timeLeft > 0 and threshold and (threshold <= C["MailExpiryWarningEveryLoginDays"] or (mail.ExpiryWarned or math.huge) > threshold) then
+         if timeLeft > 0 and AltwrightData:GetMailExpiryLevel(timeLeft) then
             local sender = AltwrightNS.AltwrightDB.global.characters[mail.Sender]
             local senderName = sender and ColoredCharacterName(sender) or mail.Sender
             local expiresIn = strtrim(AltwrightNS:LongTimeSpanToString(timeLeft))
             PrintNotification(string.format(mail.Returned and L["MailExpiringReturned"] or L["MailExpiring"], ColoredCharacterName(char), senderName, expiresIn))
-            mail.ExpiryWarned = threshold
             count = count + 1
          end
       end
@@ -673,7 +670,7 @@ local function NotifyExpiringMail()
 end
 
 local function ShowLoginAlert(message)
-   RaidNotice_AddMessage(RaidWarningFrame, AddonName .. ": " .. message, { r = 1, g = 0.82, b = 0 }, 8)
+   RaidNotice_AddMessage(RaidWarningFrame, AddonName .. ": " .. message, { r = 1, g = 0.82, b = 0 }, 12)
 end
 
 function AltwrightData:NotifyOnLogin()
