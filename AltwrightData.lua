@@ -258,8 +258,7 @@ end
 function AltwrightData:SavePlayerDataLogout()
    local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    data.LastLogout = time()
-   -- so a wrong value read during play doesn't end up in the saved variables
-   data.Money = GetMoney()
+   -- don't read GetMoney() here, it returns 0 during logout
    -- IsResting() isn't reliable during logout, keep the last value seen while playing
    AltwrightData:SavePlayerLocation()
    -- /played is only requested on load, add the time played since then
