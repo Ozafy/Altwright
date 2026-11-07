@@ -564,13 +564,11 @@ function AltwrightData:SaveProfessionItemCooldowns()
                local cooldown = prof.ItemCooldowns[itemId] or {}
                cooldown.Name = GetItemInfo(itemId) or cooldown.Name
                -- ignore the global cooldown
+               -- a 0 is never trusted to clear a saved cooldown: right after login item cooldowns aren't loaded yet
+               -- and read as 0, which would wipe a running one, an expired one is kept for the login warning
                if start and start > 0 and duration > 1.5 then
                   cooldown.Cooldown = duration
                   cooldown.CooldownEndTime = time() + (start + duration - GetTime())
-               elseif cooldown.CooldownEndTime and cooldown.CooldownEndTime > time() then
-                  -- only clear a cooldown that ended early, an expired one is kept for the login warning
-                  cooldown.Cooldown = 0
-                  cooldown.CooldownEndTime = 0
                end
                prof.ItemCooldowns[itemId] = cooldown
             end
