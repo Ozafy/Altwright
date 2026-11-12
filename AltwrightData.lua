@@ -166,7 +166,9 @@ function AltwrightData:SavePlayerAttunements()
    end
 end
 
-function AltwrightData:SavePlayerProfessions()
+-- allowPrune removes professions that are no longer in the skill list, only skill events pass it:
+-- at login the skill list can still be empty, which would remove every profession with its recipes
+function AltwrightData:SavePlayerProfessions(allowPrune)
    local data = AltwrightNS.AltwrightAddon.CurrentCharacter
    -- skill events can fire before login data is set up
    if not data.FullName then
@@ -178,10 +180,14 @@ function AltwrightData:SavePlayerProfessions()
    local skillsFound = 0
    local knownProfs = {}
    local allExpanded = true
+   local skillLines = 0
    for i = 1, GetNumSkillLines() do
     local name, isHeader, isExpanded, skillRank, _, _, skillMaxRank = GetSkillLineInfo(i)
     if isHeader and not isExpanded then
       allExpanded = false
+    end
+    if not isHeader then
+      skillLines = skillLines + 1
     end
     if profNames_rev[name] then
       local profId=profNames_rev[name]
@@ -209,7 +215,9 @@ function AltwrightData:SavePlayerProfessions()
 
    -- in case a profession was unlearned, remove it from the data
    -- collapsed skill headers hide their professions, so only prune when everything is visible
-   if allExpanded then
+   -- and the skill list is loaded (every character has weapon and language skills)
+   -- a list without any profession is never trusted, so unlearning the last one keeps its old data
+   if allowPrune == true and allExpanded and skillLines > 0 and skillsFound > 0 then
       for profId, _ in pairs(data.Professions) do
          if not tContains(knownProfs, profId) then
             data.Professions[profId] = nil
@@ -397,6 +405,11 @@ function AltwrightData:ClassBookKnownOrLearnable(itemName, classNames)
    return charactersThatKnow, charactersThatCouldLearn
 end
 
+-- recipe tooltips are cached per session, forget them once a scan may have changed what's known
+local function ClearRecipeTooltipCache()
+   AltwrightNS.AltwrightCache.Recipes = nil
+end
+
 function AltwrightData:CharacterProfessionRecipeKnownOrLearnable(profId, spellId, itemId)
    local characters = AltwrightNS:GetRealmCharactersSorted()
    local charactersThatKnow = {}
@@ -436,7 +449,8 @@ function AltwrightData:ScanEnchantingRecipes()
          local _, _, icon, _, _, _, spellID = GetSpellInfo(skillName)		-- Gets : icon = 135225, spellID = 7421
          --print(format("name: %s, skillType: %s, spellID: %d, icon: %d", name or "nil", skillType or "nil", spellID or 0, icon or 0))
          local prof = AltwrightNS.AltwrightData:GetCharacterProfession(AltwrightNS.AltwrightAddon.CurrentCharacter, profId)
-         if prof then
+         -- a craft the client can't resolve to a spell yet is skipped instead of breaking the whole scan
+         if prof and spellID then
             prof.Spells = prof.Spells or {}
             prof.Spells[spellID] = {
                Name = skillName,
@@ -446,6 +460,7 @@ function AltwrightData:ScanEnchantingRecipes()
          end
 
       end
+      ClearRecipeTooltipCache()
    end
 end
 
@@ -487,6 +502,7 @@ function AltwrightData:ScanTradeSkills()
             end
          end
       end
+      ClearRecipeTooltipCache()
    end
 end
 

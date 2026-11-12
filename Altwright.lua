@@ -224,12 +224,16 @@ function AltwrightAddon:TRADE_SKILL_UPDATE()
    ScheduleOnce("tradeSkills", AltwrightNS.AltwrightData.ScanTradeSkills, 0.5)
 end
 
+local function UpdateProfessions()
+   AltwrightNS.AltwrightData:SavePlayerProfessions(true)
+end
+
 function AltwrightAddon:CHAT_MSG_SKILL()
-   ScheduleOnce("professions", AltwrightNS.AltwrightData.SavePlayerProfessions, 0.5)
+   ScheduleOnce("professions", UpdateProfessions, 0.5)
 end
 
 function AltwrightAddon:SKILL_LINES_CHANGED()
-   ScheduleOnce("professions", AltwrightNS.AltwrightData.SavePlayerProfessions, 0.5)
+   ScheduleOnce("professions", UpdateProfessions, 0.5)
 end
 
 function AltwrightAddon:SPELLS_CHANGED()
